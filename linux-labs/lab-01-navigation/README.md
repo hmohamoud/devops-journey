@@ -1,66 +1,72 @@
-cat > linux-labs/lab-01-navigation/README.md << 'EOF'
 # Linux Lab 01 — Navigation & File Management
 
 ## Problem
-Needed to efficiently navigate and manage files in a Linux system without relying on trial-and-error or manual searching.
+Operating in a Linux environment without clear navigation leads to slow workflows, file misplacement, and errors.  
+Needed a reliable way to move through the filesystem, manage files, and recover from mistakes without guessing.
 
 ---
 
 ## What I Built
-Created a structured filesystem with directories (logs, reports, drafts, scripts, archive) and implemented workflows to organise, move, copy, and manage files across the system.
+A structured Linux workspace with multiple directories (`logs`, `reports`, `drafts`, `scripts`, `archive`) and a repeatable workflow to navigate, organise, and manage files efficiently.
 
 ---
 
 ## How I Solved It
-- Used `cd`, `pwd`, `ls` for precise navigation
-- Applied relative (`../`) and absolute (`~/...`) paths for efficiency
-- Used `mv`, `cp`, `rm`, `mkdir`, `rmdir` for file operations
-- Verified every step using `ls` to avoid errors
+- Used `pwd` to always confirm current location
+- Used `ls` to inspect directories before acting
+- Navigated using both:
+  - relative paths (`cd ../reports`)
+  - absolute paths (`cd ~/devops-journey/...`)
+- Managed files using:
+  - `mv` (move/rename)
+  - `cp` (copy)
+  - `rm` (delete)
+  - `mkdir` / `rmdir` (directory control)
+- Verified every operation using `ls` to prevent errors
+- Recovered from mistakes (wrong paths, missing files) using inspection instead of guessing
 
 ---
 
 ## Tools Used
-- `cd`, `pwd`, `ls`
-- `mv`, `cp`, `rm`
-- `mkdir`, `rmdir`
-- `cat`, `echo`
+- Navigation: `cd`, `pwd`, `ls`
+- File management: `mv`, `cp`, `rm`
+- Directories: `mkdir`, `rmdir`
+- File inspection/editing: `cat`, `echo`
 
 ---
 
 ## Result
-- Navigated filesystem without guessing
-- Reduced inefficient multi-step movement into single commands
+- Navigated the filesystem without trial-and-error
+- Reduced multi-step navigation into single efficient commands
 - Managed files across directories with consistent verification
+- Recovered from errors quickly using logical inspection
 
 ---
 
 ## Proof
 
-### Structure
-\`\`\`bash
+### Directory Structure
 ls -R
-\`\`\`
 
 ### File Movement
-\`\`\`bash
 mv reports/file1.txt archive/
 ls archive
-\`\`\`
 
 ### Efficient Navigation
-\`\`\`bash
 cd ../reports
 pwd
-\`\`\`
+
+### File Creation
+touch reports/file2.txt
+ls reports
 
 ---
 
 ## Key Takeaway
-Linux does not guess — everything depends on correct paths.  
-Efficiency comes from understanding structure, not memorising commands.
+Linux does not guess — every command depends on correct paths.  
+Efficiency comes from understanding the filesystem structure, not memorising commands.
 
 ---
 
 ## Next Step
-Permissions and execution control (Lab 02)
-EOF
+Permissions, ownership, and execution control (Lab 02)

@@ -2,169 +2,199 @@ cat > evidence.md <<'EOF'
 # Evidence
 
 ## Completed Tasks
-- Created the lab directory structure: `logs/`, `reports/`, `drafts/`, `scripts/`, `archive/`
-- Created initial files: `logs/system.log`, `reports/todo.txt`, `drafts/notes.txt`
-- Used `pwd`, `ls`, and `ls -R` to inspect location and structure
-- Navigated between directories using:
-  - normal movement (`cd folder`, `cd ..`)
+- Built lab structure: `logs/`, `reports/`, `drafts/`, `scripts/`, `archive/`
+- Created files: `logs/system.log`, `reports/todo.txt`, `drafts/notes.txt`
+- Verified structure using: `pwd`, `ls`, `ls -R`
+- Navigated using:
+  - basic movement (`cd`, `cd ..`)
   - relative paths (`cd ../reports`, `cd ../drafts`)
   - absolute paths (`cd ~/devops-journey/linux-labs/lab-01-navigation/reports`)
-- Created files with `touch`
-- Moved and renamed files with `mv`
-- Copied files with `cp`
-- Deleted files with `rm`
-- Created and removed directories with `mkdir` and `rmdir`
-- Added content to a file correctly using:
+- Performed file operations:
+  - create → `touch`
+  - move/rename → `mv`
+  - copy → `cp`
+  - delete → `rm`
+  - directory management → `mkdir`, `rmdir`
+- Modified file content using:
   - `echo "Hello World" >> drafts/notes.txt`
 
 ---
 
 ## Break/Fix Logs
 
-### Issue 1 — Wrong relative navigation
-Problem:
-Tried to move from `archive` to `reports` using `cd reports`
+### Issue 1 — Incorrect relative navigation
 
-Cause:
-`reports` was not inside `archive`; it was a sibling directory
+Command:
+`cd reports`
 
-Diagnosis:
-Checked current location with `pwd` and understood the directory structure
+Expected:
+Move from `archive` → `reports`
+
+Actual:
+Failed
+
+Error:
+`cd: no such file or directory`
+
+Why:
+`reports` is not inside `archive` (it is a sibling)
 
 Fix:
-Used:
 `cd ../reports`
 
-Prevention:
-When moving between sibling folders, go up one level first with `..`
+Lesson:
+Sibling movement = go up (`..`) → then enter target
 
 ---
 
-### Issue 2 — Wrong absolute path
-Problem:
-Tried:
+### Issue 2 — Invalid absolute path
+
+Command:
 `cd ~/devops-journey/lab-01-navigation/reports`
 
-Cause:
-Missed the `linux-labs/` directory in the full path
+Expected:
+Navigate to reports
 
-Diagnosis:
-Used `ls`, `ls -R`, and inspected the actual structure from `devops-journey`
+Actual:
+Failed
+
+Error:
+`no such file or directory`
+
+Why:
+Missing `linux-labs/` in full path
 
 Fix:
-Used:
 `cd ~/devops-journey/linux-labs/lab-01-navigation/reports`
 
-Prevention:
-Build the absolute path from the real directory structure, not memory alone
+Lesson:
+Absolute paths must match the exact filesystem — no guessing
 
 ---
 
-### Issue 3 — Incorrect `mv` syntax
-Problem:
-Tried:
+### Issue 3 — Wrong `mv` syntax
+
+Command:
 `mv reports/file1.txt > archive`
 
-Cause:
-Used `>` instead of passing the destination as a normal argument
+Expected:
+Move file into archive
 
-Diagnosis:
-The `mv` usage output showed the command syntax was wrong
+Actual:
+Failed
+
+Error:
+`mv` usage output
+
+Why:
+Used shell redirection (`>`) instead of argument
 
 Fix:
-Used:
 `mv reports/file1.txt archive/`
 
-Prevention:
-`mv` syntax is:
+Lesson:
+`mv` syntax:
 `mv source destination`
 
 ---
 
-### Issue 4 — Renaming a file that did not exist
-Problem:
-Tried:
+### Issue 4 — Renaming non-existent file
+
+Command:
 `mv archive/file.txt archive/ameen.txt`
 
-Cause:
-The real file name was `file1.txt`, not `file.txt`
+Expected:
+Rename file
 
-Diagnosis:
-Checked contents with:
-`ls archive`
+Actual:
+Failed
+
+Error:
+File not found
+
+Why:
+Incorrect filename (`file.txt` ≠ `file1.txt`)
 
 Fix:
-Used:
 `mv archive/file1.txt archive/hamza.txt`
 
-Prevention:
-Always verify actual filenames with `ls` before renaming
+Lesson:
+Always confirm filenames with `ls` before acting
 
 ---
 
-### Issue 5 — Incorrect `echo` syntax created unintended files
-Problem:
-Tried:
+### Issue 5 — Incorrect `echo` redirection
+
+Command:
 `echo > "My name is Hamza" drafts/notes.txt`
-and
-`echo >> "Hello World" drafts/notes.txt`
 
-Cause:
-The order of `echo`, text, redirection, and target file was wrong
+Expected:
+Write text into file
 
-Diagnosis:
-Used `ls` and noticed unexpected files were created in the current directory
+Actual:
+Created unintended files
+
+Error:
+Misused redirection syntax
+
+Why:
+Incorrect order of text and redirection
 
 Fix:
-Removed unintended files and used:
 `echo "Hello World" >> drafts/notes.txt`
 
-Prevention:
-Correct pattern:
-- append: `echo "text" >> file`
-- overwrite: `echo "text" > file`
+Lesson:
+- append → `>>`
+- overwrite → `>`
+- format must be exact
 
 ---
 
-### Issue 6 — Trying to access files from the wrong location
-Problem:
-Inside `logs/`, tried:
+### Issue 6 — Accessing file from wrong location
+
+Command:
 `cat README.md`
 
-Cause:
-`README.md` was not inside `logs`; it was one level up
+Expected:
+Display file
 
-Diagnosis:
-Used current location awareness and path reasoning
+Actual:
+Failed
+
+Error:
+`No such file or directory`
+
+Why:
+File not in current directory
 
 Fix:
-Used:
 `cat ../README.md`
 
-Prevention:
-Use relative paths based on current directory, not assumptions
+Lesson:
+Paths are always relative to current location unless absolute
 
 ---
 
 ## Key Patterns
 
-- Most errors came from:
-  - incorrect paths
-  - wrong command syntax
-  - assuming a file/folder existed without verifying
+Common failure points:
+- incorrect paths
+- wrong command syntax
+- assumptions without verification
 
-- What helped me fix them:
-  - using `pwd` to confirm location
-  - using `ls` / `ls -R` to inspect structure
-  - slowing down and checking exact filenames before acting
+What resolved issues:
+- `pwd` → confirm location
+- `ls` / `ls -R` → inspect structure
+- verifying before executing
 
 ---
 
-## Main Takeaways
-- Paths are everything in navigation
-- `ls` should be used before guessing
-- `pwd` keeps location awareness high
-- `mv` can both move and rename
-- `echo` redirection syntax must be exact
-- Errors are useful if I diagnose them properly
+## Core Takeaways
+
+- Paths control everything in Linux
+- Never guess — verify with `ls`
+- `pwd` maintains spatial awareness
+- `mv` = move + rename
+- `echo` requires precise syntax
+- Errors are signals — not problems
 EOF

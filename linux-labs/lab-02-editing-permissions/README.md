@@ -1,49 +1,82 @@
+cat > linux-labs/lab-02-editing-permissions/README.md <<'EOF'
 # Lab 02 — Editing Files & Permissions
 
-## Objective
-Build practical Linux skill in editing files, inspecting permissions, changing access, and fixing permission-related failures.
+## Problem
+Needed to control file access and fix execution failures in a Linux system where scripts and files were not behaving correctly due to permission issues.
 
-## Skills Covered
-- `nano`
-- `cat`
-- `ls -l`
-- `chmod`
-- executable scripts with `./file`
+---
 
-## What I Did
-- Created a small Linux lab environment with:
-  - `files/`
-  - `configs/`
-  - `scripts/`
-  - `archive/`
-- Edited files using `nano`
-- Verified file contents using `cat`
-- Inspected permissions with `ls -l`
+## What I Built
+Created a structured environment with:
+
+- files/
+- configs/
+- scripts/
+- archive/
+
+Simulated real-world permission failures and recovery scenarios.
+
+---
+
+## How I Solved It
+- Edited files using nano and verified with cat
+- Inspected permissions using ls -l
 - Changed permissions using:
-  - symbolic mode (`+x`, `-w`)
-  - numeric mode (`755`, `640`, `440`, etc.)
-- Ran scripts with `./script`
+  - symbolic mode (+x, -w)
+  - numeric mode (755, 640, 440)
+- Executed scripts using ./script
+- Broke permissions intentionally and fixed them using inspection
 
-## Problems I Solved
-- Fixed a broken script that failed due to an incorrect shebang
-- Fixed execution failures caused by missing execute permission
-- Triggered and fixed read permission failures
-- Triggered and fixed write/edit permission issues
-- Corrected multiple path and command mistakes using terminal inspection
+---
 
-## Key Learning
-- `ls -l` is the first command to use when checking file access
-- `r`, `w`, and `x` control what actions are allowed
-- `644` is a normal file pattern
-- `755` is a common script pattern
-- permissions should be set intentionally, not guessed
+## Tools Used
+- nano, cat
+- ls -l
+- chmod
+- script execution (./file)
+
+---
+
+## Results
+- Fixed script execution failures
+- Diagnosed and resolved permission errors quickly
+- Controlled read, write, execute access intentionally
+- Stopped relying on guessing by using inspection first
+
+---
+
+## Proof
+
+### Script not executable → fixed
+ls -l scripts/deploy.sh
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh
+
+### Read permission failure → fixed
+chmod 355 files/read_only.txt
+cat files/read_only.txt
+
+chmod 755 files/read_only.txt
+cat files/read_only.txt
+
+---
+
+## Key Takeaways
+- ls -l is the first step in debugging permissions
+- r, w, x directly control behaviour
+- chmod must be used intentionally
+- scripts need correct shebang + execute permission
+
+---
 
 ## Outcome
-This lab strengthened my understanding of:
-- file editing in Linux
-- permission structure
-- symbolic vs numeric chmod
-- debugging permission-related problems
+I can now:
+- debug permission issues quickly
+- control file access precisely
+- fix script execution problems without trial-and-error
+
+---
 
 ## Next Step
-Lab 03 — file searching, inspection, and text filtering
+Lab 03 — Text Processing & Inspection
+EOF
