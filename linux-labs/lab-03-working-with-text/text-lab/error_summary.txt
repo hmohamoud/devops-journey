@@ -1,0 +1,2 @@
+   2 2026-04-16 09:02:10 ERROR Failed to connect to database db-prod-01
+   1 2026-04-16 09:06:20 ERROR Timeout while calling payment-service
