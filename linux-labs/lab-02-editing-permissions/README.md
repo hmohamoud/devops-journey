@@ -1,4 +1,3 @@
-cat > linux-labs/lab-02-editing-permissions/README.md <<'EOF'
 # Lab 02 — Editing Files & Permissions
 
 ## Problem
