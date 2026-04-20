@@ -67,8 +67,9 @@ Mistakes are expected — recovery is required.
 - [ ] Move a file from reports/ → archive/
 - [ ] Rename a file using `mv`
 - [ ] Copy a file into archive/ using `cp`
+- [ ] Make a backup copy of logs/ to /logs_copy using `cp -r`
 - [ ] Delete a file using `rm`
-- [ ] Create and remove a directory (`mkdir`, `rmdir`)
+- [ ] Create and remove a directory (`mkdir`, `rmdir`, `rmd -r`)
 
 - [ ] After EACH operation:
   → verify using `ls`

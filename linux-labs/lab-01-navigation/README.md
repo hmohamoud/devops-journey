@@ -46,19 +46,23 @@ A structured Linux workspace with multiple directories (`logs`, `reports`, `draf
 ## Proof
 
 ### Directory Structure
-ls -R
+![directory structure](screenshots/ls-R.png)
 
-### File Movement
-mv reports/file1.txt archive/
-ls archive
+---
 
-### Efficient Navigation
-cd ../reports
-pwd
+### Navigation
+![navigation](screenshots/navigation.png)
 
-### File Creation
-touch reports/file2.txt
-ls reports
+---
+
+### File Operation
+![file move](screenshots/file-move.png)
+
+---
+
+### Break/Fix — Wrong Path
+![wrong path](screenshots/wrong-path.png)
+
 
 ---
 
