@@ -80,4 +80,4 @@ They are the ones who verify before acting and diagnose before fixing.
 
 ## Next Step
 
-[Lab 02 — Editing Files & Permissions](../lab-02-permissions/)
+[Lab 02 — Editing Files & Permissions](../lab-02-editing-permissions/)
