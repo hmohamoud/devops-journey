@@ -1,76 +1,83 @@
-# Linux Lab 01 — Navigation & File Management
+# Lab 01 — Linux Navigation & File Management
+
+**Environment:** macOS Sequoia | Zsh | VS Code Terminal | Apple Silicon (M-series)
+
+---
 
 ## Problem
-Operating in a Linux environment without clear navigation leads to slow workflows, file misplacement, and errors.  
-Needed a reliable way to move through the filesystem, manage files, and recover from mistakes without guessing.
+
+Operating in a Linux environment without clear navigation leads to slow workflows,
+file misplacement, and errors.
+Needed a reliable way to move through the filesystem, manage files,
+and recover from mistakes without guessing.
 
 ---
 
 ## What I Built
-A structured Linux workspace with multiple directories (`logs`, `reports`, `drafts`, `scripts`, `archive`) and a repeatable workflow to navigate, organise, and manage files efficiently.
+
+A structured Linux workspace with directories (`logs`, `reports`, `drafts`,
+`scripts`, `archive`) and a repeatable workflow to navigate, organise,
+and manage files efficiently.
 
 ---
 
 ## How I Solved It
-- Used `pwd` to always confirm current location
-- Used `ls` to inspect directories before acting
-- Navigated using both:
-  - relative paths (`cd ../reports`)
-  - absolute paths (`cd ~/devops-journey/...`)
-- Managed files using:
-  - `mv` (move/rename)
-  - `cp` (copy)
-  - `rm` (delete)
-  - `mkdir` / `rmdir` (directory control)
-- Verified every operation using `ls` to prevent errors
-- Recovered from mistakes (wrong paths, missing files) using inspection instead of guessing
 
----
+**Navigation:**
+- Used `pwd` before every move — in a deep directory tree one wrong assumption
+  costs minutes of backtracking
+- Used `ls` to inspect before acting — never assumed a file or folder existed
+- Relative paths (`cd ../reports`) for quick sibling movement
+- Absolute paths (`cd ~/devops-journey/linux-labs/...`) when location was uncertain
 
-## Tools Used
-- Navigation: `cd`, `pwd`, `ls`
-- File management: `mv`, `cp`, `rm`
-- Directories: `mkdir`, `rmdir`
-- File inspection/editing: `cat`, `echo`
+**File Management:**
+- `mv` to move and rename — one command, two uses
+- `cp` to duplicate safely before destructive operations
+- `rm` used deliberately, always verified with `ls` after
+- `mkdir` / `rmdir` for directory control
 
----
-
-## Result
-- Navigated the filesystem without trial-and-error
-- Reduced multi-step navigation into single efficient commands
-- Managed files across directories with consistent verification
-- Recovered from errors quickly using logical inspection
+**Verification habit:**
+Every single operation was confirmed with `ls` or `pwd` before moving on.
+This is not optional — it is the habit that prevents compounding errors.
 
 ---
 
 ## Proof
 
-### Directory Structure
-![directory structure](screenshots/ls-R.png)
+### Directory structure
+![Directory structure](screenshots/ls-R.png)
+
+### Navigation — relative and absolute paths
+![Navigation](screenshots/navigation.png)
+
+### File operation — move and verify
+![File move](screenshots/file-move.png)
+
+### Break/fix — wrong path error and recovery
+![Wrong path fix](screenshots/wrong-path.png)
 
 ---
 
-### Navigation
-![navigation](screenshots/navigation.png)
+## Break/Fix Summary
 
----
-
-### File Operation
-![file move](screenshots/file-move.png)
-
----
-
-### Break/Fix — Wrong Path
-![wrong path](screenshots/wrong-path.png)
-
+| Issue | Cause | Fix |
+|---|---|---|
+| `cd reports` failed from archive/ | reports is a sibling, not a child | `cd ../reports` |
+| Absolute path not found | Missing `linux-labs/` in path | Added full correct path |
+| `mv` failed with `>` operator | Used shell redirect instead of argument | `mv source destination/` |
+| Renamed wrong file | Assumed filename without checking | `ls` first, then `mv` |
+| `echo` created wrong files | Incorrect syntax order | `echo "text" >> file.txt` |
 
 ---
 
 ## Key Takeaway
-Linux does not guess — every command depends on correct paths.  
-Efficiency comes from understanding the filesystem structure, not memorising commands.
+
+Linux does not guess — every command depends on correct paths.
+The engineers who work fastest are not the ones who memorise the most commands.
+They are the ones who verify before acting and diagnose before fixing.
 
 ---
 
 ## Next Step
-Permissions, ownership, and execution control (Lab 02)
+
+[Lab 02 — Editing Files & Permissions](../lab-02-permissions/)
