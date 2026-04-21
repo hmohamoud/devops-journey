@@ -78,4 +78,3 @@ I can now:
 
 ## Next Step
 Lab 03 — Text Processing & Inspection
-EOF
