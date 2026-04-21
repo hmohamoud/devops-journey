@@ -7,7 +7,7 @@
 ## Problem
 
 Operating in a Linux environment without clear navigation leads to slow workflows,
-file misplacement, and errors.
+file misplacement, and errors.  
 Needed a reliable way to move through the filesystem, manage files,
 and recover from mistakes without guessing.
 
@@ -24,46 +24,55 @@ and manage files efficiently.
 ## How I Solved It
 
 **Navigation:**
-- Used `pwd` before every move — in a deep directory tree one wrong assumption
-  costs minutes of backtracking
-- Used `ls` to inspect before acting — never assumed a file or folder existed
-- Relative paths (`cd ../reports`) for quick sibling movement
-- Absolute paths (`cd ~/devops-journey/linux-labs/...`) when location was uncertain
+- Used `pwd` before every move — prevents incorrect assumptions in deep directory trees
+- Used `ls` before acting — verified structure instead of guessing
+- Used relative paths (`cd ../reports`) for efficient movement between directories
+- Used absolute paths (`cd ~/devops-journey/...`) for recovery when location was uncertain
 
 **File Management:**
-- `mv` to move and rename — one command, two uses
-- `cp` to duplicate safely before destructive operations
-- `rm` used deliberately, always verified with `ls` after
-- `mkdir` / `rmdir` for directory control
+- `mv` for moving and renaming in a single operation
+- `cp` to safely duplicate before destructive actions
+- `rm` used deliberately with verification after execution
+- `mkdir` / `rmdir` to control directory structure
 
 **Verification habit:**
-Every single operation was confirmed with `ls` or `pwd` before moving on.
-This is not optional — it is the habit that prevents compounding errors.
+Every operation was validated using `ls` or `pwd`.  
+This prevents silent errors and ensures state awareness at all times.
 
 ---
 
 ## Proof
 
 ### 1. Directory Structure (Recursive Listing)
-Shows full project layout using `ls -R`
+Shows full project layout using `ls -R` to understand hierarchy before navigation  
 ![Directory structure](screenshots/ls-R.png)
 
 ---
 
 ### 2. Navigation (Relative vs Absolute Paths)
-Demonstrates correct movement across directories and path awareness
+Demonstrates controlled navigation across directories using:
+- relative paths for efficiency
+- absolute paths for recovery  
+Each movement is verified with `pwd`  
 ![Navigation](screenshots/navigation.png)
 
 ---
 
 ### 3. File Operations (Move + Verify)
-File moved successfully and verified using `ls`
+Demonstrates safe file movement using `mv`, followed by verification using `ls`  
+Ensures file operations are intentional and correct  
 ![File move](screenshots/file-move.png)
 
 ---
 
 ### 4. Break/Fix — Incorrect Path Recovery
-Initial failure → corrected using proper relative path
+Demonstrates real debugging workflow:
+- attempted invalid path (`cd reports`)
+- received system error
+- inspected structure using `ls`
+- corrected using relative path (`cd ../reports`)
+- verified using `pwd`  
+
 ![Wrong path fix](screenshots/wrong-path.png)
 
 ---
@@ -74,17 +83,19 @@ Initial failure → corrected using proper relative path
 |---|---|---|
 | `cd reports` failed from archive/ | reports is a sibling, not a child | `cd ../reports` |
 | Absolute path not found | Missing `linux-labs/` in path | Added full correct path |
-| `mv` failed with `>` operator | Used shell redirect instead of argument | `mv source destination/` |
-| Renamed wrong file | Assumed filename without checking | `ls` first, then `mv` |
-| `echo` created wrong files | Incorrect syntax order | `echo "text" >> file.txt` |
+| `mv` failed with `>` operator | Misused shell redirection | Used correct syntax: `mv source destination/` |
+| Renamed wrong file | Assumed filename without verification | Used `ls` before operation |
+| `echo` created incorrect files | Incorrect syntax order | Used `echo "text" >> file.txt` |
 
 ---
 
 ## Key Takeaway
 
-Linux does not guess — every command depends on correct paths.
-The engineers who work fastest are not the ones who memorise the most commands.
-They are the ones who verify before acting and diagnose before fixing.
+Linux does not guess — every command depends on correct paths and context.  
+Efficiency comes from:
+- verifying before acting
+- diagnosing before fixing
+- understanding structure, not memorising commands
 
 ---
 
