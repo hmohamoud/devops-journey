@@ -44,16 +44,26 @@ This is not optional — it is the habit that prevents compounding errors.
 
 ## Proof
 
-### Directory structure
+### 1. Directory Structure (Recursive Listing)
+Shows full project layout using `ls -R`
 ![Directory structure](screenshots/ls-R.png)
 
-### Navigation — relative and absolute paths
+---
+
+### 2. Navigation (Relative vs Absolute Paths)
+Demonstrates correct movement across directories and path awareness
 ![Navigation](screenshots/navigation.png)
 
-### File operation — move and verify
+---
+
+### 3. File Operations (Move + Verify)
+File moved successfully and verified using `ls`
 ![File move](screenshots/file-move.png)
 
-### Break/fix — wrong path error and recovery
+---
+
+### 4. Break/Fix — Incorrect Path Recovery
+Initial failure → corrected using proper relative path
 ![Wrong path fix](screenshots/wrong-path.png)
 
 ---
