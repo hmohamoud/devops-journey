@@ -1,107 +1,135 @@
 # Lab 03 — Linux Text Processing & System Inspection
 
-## Objective
-
-Develop the ability to investigate Linux systems quickly using command-line tools instead of manual file inspection.
-
-This lab focused on production-style problem solving using logs, datasets, and live monitoring.
+**Environment:** macOS Sequoia | Zsh | VS Code Terminal | Apple Silicon (M-series)
 
 ---
 
-## Real-World Scenario
+## Problem
 
 A Linux server is generating logs, user records, and transaction data.
+Users are reporting failures, duplicate records exist, and suspicious
+activity may be present.
 
-Users report failures, duplicate records exist, and suspicious activity may be present.
-
-My task was to diagnose issues using fast command-line workflows.
+Needed to diagnose and extract answers from live system data
+without opening files manually — using only command-line workflows.
 
 ---
 
 ## What I Built
 
-Created a working lab environment containing:
+A working lab environment simulating a live server:
+- `text-lab/logs/app.log` — application logs with INFO, WARNING, ERROR entries
+- `text-lab/logs/errors.log` — isolated error stream
+- `text-lab/data/users.txt` — user records with intentional duplicates
+- `text-lab/data/transactions.txt` — numeric transaction values with repeated amounts
 
-- `logs/app.log`
-- `logs/errors.log`
-- `data/users.txt`
-- `data/transactions.txt`
-
-Used realistic repeated errors, duplicate users, and repeated transaction values.
-
----
-
-## Core Skills Demonstrated
-
-### Log Investigation
-
-Used:
-
-- `grep`
-- `grep -c`
-- `tail -f`
-
-Results:
-
-- identified 4 ERROR events
-- detected repeated database connection failures
-- monitored live logs in real time
-
-### Data Quality Analysis
-
-Used:
-
-- `sort`
-- `uniq`
-- `uniq -d`
-- `uniq -c`
-
-Results:
-
-- detected duplicate users
-- reduced dataset from 16 rows to 13 clean unique users
-
-### Numeric Analysis
-
-Used:
-
-- `sort -n`
-- `sort -nr`
-
-Results:
-
-- ranked transaction values
-- identified repeated amounts
-- created frequency distributions
-
-### File Discovery
-
-Used:
-
-- `find`
-- wildcards `*`
-
-Results:
-
-- located all `.txt` and `.log` files instantly
-- operated across multiple files efficiently
+All data was realistic — repeated errors, duplicate users, suspicious
+transaction patterns — to simulate genuine system investigation.
 
 ---
 
-## Engineering Behaviours Practised
+## How I Solved It
 
-- solved problems without opening files manually
-- chained commands using pipes
-- verified output after every command
-- debugged wrong paths and case issues
-- selected efficient commands under pressure
+**Log Investigation:**
+- `grep "ERROR" logs/app.log` → extract all failure events instantly
+- `grep -c "ERROR" logs/app.log` → count total occurrences without manual scanning
+- `grep "ERROR" logs/app.log | sort | uniq -c | sort -nr` → rank errors by
+  frequency — the most common failure surfaces immediately
+- `tail -f logs/app.log | grep "ERROR"` → monitor live logs and filter
+  for failures in real time — this is how production systems are watched
+
+**Data Quality Analysis:**
+- `sort data/users.txt | uniq -d` → expose duplicate records
+- `sort data/users.txt | uniq` → produce a clean deduplicated dataset
+- `sort data/users.txt | uniq -c` → count how many times each user appears —
+  frequency over 1 signals corruption
+- Reduced dataset from 16 rows to 13 clean unique users
+
+**Numeric Analysis:**
+- `sort -n data/transactions.txt` → rank values lowest to highest
+- `sort -nr data/transactions.txt` → rank highest to lowest —
+  surfaces outliers immediately
+- `sort data/transactions.txt | uniq -c | sort -nr` → frequency distribution —
+  repeated transaction amounts can signal automated fraud or system bugs
+
+**File Discovery:**
+- `find . -name "*.txt"` → locate all text files without knowing their location
+- `find . -name "*.log"` → locate all log files across the entire directory tree
+- Wildcards (`data/*.txt`, `logs/*.log`) → operate across multiple files
+  in one command — essential in large systems with hundreds of files
 
 ---
 
-## Example Workflows
+## Proof
+
+### Error extraction and count
+![error extraction](screenshots/grep-error-count.png)
+
+### Duplicate user detection
+![duplicate users](screenshots/duplicate-users.png)
+
+### Frequency distribution pipeline
+![frequency distribution](screenshots/frequency-distribution.png)
+
+### Live log monitoring
+![live monitoring](screenshots/tail-f-monitoring.png)
+
+### File discovery with find
+![file discovery](screenshots/find-command.png)
+
+---
+
+## Break/Fix Summary
+
+| Issue | Cause | Fix |
+|---|---|---|
+| `grep "error"` returned nothing | File used uppercase `ERROR` | `grep -i "error"` for case-insensitive search |
+| `wc -l < app.log` failed | Wrong path — not in logs/ directory | `wc -l < logs/app.log` |
+| `tail -f logs.app` failed | Dot instead of slash in filename | `tail -f logs/app.log` |
+| `ls *.txt` returned nothing | No .txt files in current directory | `ls data/*.txt` — wildcards need correct location |
+| `find . -name "data/users.txt"` returned nothing | find -name takes filename not path | `find . -name "users.txt"` |
+| `cat logs/app.log \| grep "ERROR"` worked but inefficient | Unnecessary cat process | `grep "ERROR" logs/app.log` directly |
+| Duplicates with different case not caught | `uniq` is case-sensitive | `sort file \| uniq -i` |
+
+---
+
+## Key Pipelines
 
 ```bash
+# Count total errors
 grep "ERROR" logs/app.log | wc -l
-sort data/users.txt | uniq -d
+
+# Rank errors by frequency — most common failure first
 grep "ERROR" logs/app.log | sort | uniq -c | sort -nr
+
+# Detect duplicate users
+sort data/users.txt | uniq -d
+
+# Transaction frequency distribution
+sort data/transactions.txt | uniq -c | sort -nr
+
+# Monitor live logs for errors only
 tail -f logs/app.log | grep "ERROR"
+
+# Find all log files from any location
+find . -name "*.log"
+```
+
+---
+
+## Key Takeaway
+
+The difference between a beginner and an engineer is not knowing more commands —
+it is knowing how to chain them.
+
+A single pipe turns a raw log file into an instant answer.
+`grep | sort | uniq -c | sort -nr` is not four commands —
+it is one question: *what is failing most often?*
+
+Never open a file manually when a command can answer the question faster.
+
+---
+
+## Next Step
+
+[Lab 04 — Shell I/O & Redirection](../lab-04-shell-io-redirection/)
