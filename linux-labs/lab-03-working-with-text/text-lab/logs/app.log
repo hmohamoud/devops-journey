@@ -13,3 +13,6 @@ System error Failure
 System ERROR Failure
 INFO login ok
 ERROR payment timeout
+ERROR test failure
+2026-04-20 ERROR Payment failure
+2026-04-20 ERROR API timeout

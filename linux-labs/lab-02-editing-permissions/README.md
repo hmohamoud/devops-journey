@@ -57,7 +57,7 @@ This environment was used to simulate real-world failures:
 - `chmod +x` → enable execution (required for scripts)
 - `chmod -w` → remove write (simulate edit restrictions)
 
-Used for fast, targeted changes
+Used for fast, targeted changes.
 
 ---
 
@@ -67,7 +67,7 @@ Used for fast, targeted changes
 - `455` → owner cannot write (locked file scenario)
 - `444` → read-only for all users
 
-Used for setting full permission states efficiently
+Used for setting full permission states efficiently.
 
 ---
 
@@ -84,10 +84,10 @@ If either is missing:
 ### Verification Habit
 Every change was validated using:
 - `ls -l` → confirm permission state
-- `./script.sh` → confirm execution
+- `./deploy.sh` / `./runme.sh` → confirm execution
 - `cat` / `nano` → confirm read/write behaviour
 
-No assumptions — only verified state
+No assumptions — only verified state.
 
 ---
 
@@ -99,10 +99,8 @@ Initial inspection using `ls -l` to understand file access before modification
 
 ---
 
-### 2. Script Execution (Failure → Fix → Success)
-- Script failed due to missing execute permission
-- Fixed using `chmod +x deploy.sh`
-- Verified with successful execution  
+### 2. Script Execution (Before → After)
+Shows script state before and after adding execute permission with `chmod +x`  
 ![script execution](screenshots/script-execution.png)
 
 ---
@@ -118,7 +116,7 @@ Initial inspection using `ls -l` to understand file access before modification
 
 ### 4. Break/Fix — Read/Write Restriction
 - Removed write permission → file could not be edited
-- Removed read permission → file access restricted
+- Removed read permission → file could not be viewed with `cat`
 - Diagnosed using permission string
 - Restored using `chmod 755`
 - Verified by editing and reading file successfully  
@@ -143,7 +141,7 @@ Ownership management (`chown`, `chgrp`) is intentionally excluded and will be co
 | Issue | Cause | Fix |
 |---|---|---|
 | Script would not run | Execute permission missing | `chmod +x script.sh` |
-| Permission denied on execution | Execute removed | `chmod +x script.sh` |
+| Permission denied on execution | Execute permission removed | `chmod +x script.sh` |
 | File could not be edited | Write permission removed | `chmod 755 file.txt` |
 | File could not be read | Read permission removed | `chmod 755 file.txt` |
 | Script failed — bad interpreter | Incorrect shebang (`#!bin/bash`) | Fixed to `#!/bin/bash` |
