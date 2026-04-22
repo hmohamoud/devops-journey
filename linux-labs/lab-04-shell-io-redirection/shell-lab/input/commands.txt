@@ -1,0 +1,23 @@
+ls
+ls -l
+ls /invalid/path
+pwd
+cd ..
+cd nonexistent_dir
+grep "ERROR" input/logs.txt
+grep "ERROR" missing_file.txt
+sort input/users.txt
+sort missing_file.txt
+wc -l input/users.txt
+wc -l missing_file.txt
+cat input/users.txt
+cat missing_file.txt
+echo "Hello World"
+echo "ERROR Test Message"
+mkdir temp/test-dir
+mkdir temp/test-dir
+rm temp/test-dir
+rm missing_file
+whoami
+date
+uname -a

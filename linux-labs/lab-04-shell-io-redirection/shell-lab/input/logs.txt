@@ -1,0 +1,11 @@
+2026-04-19 09:00:12 INFO User login successful user_id=1024
+2026-04-19 09:01:45 WARNING Disk usage at 78%
+2026-04-19 09:02:10 ERROR Failed to connect to database db-prod-01
+2025-04-19 09:02:10 ERROR Failed to connect to database db-prod-01
+2026-04-19 09:03:01 INFO User logout successful user_id=1024
+2026-04-19 09:04:40 INFO Scheduled backup started
+2026-04-19 09:05:11 INFO Scheduled backup completed
+2026-04-19 09:05:55 WARNING High memory usage detected: 82%
+2026-04-19 09:06:20 ERROR Timeout while calling payment-service
+2026-04-19 09:07:33 INFO User login successful user_id=2048
+2026-04-19 09:08:12 WARNING CPU usage high: 85% 

@@ -1,0 +1,4 @@
+input:
+commands.txt
+logs.txt
+users.txt
