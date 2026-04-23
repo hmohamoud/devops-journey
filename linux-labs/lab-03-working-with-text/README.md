@@ -31,32 +31,26 @@ transaction patterns — to simulate genuine system investigation.
 ## How I Solved It
 
 **Log Investigation:**
-- `grep "ERROR" logs/app.log` → extract all failure events instantly
-- `grep -c "ERROR" logs/app.log` → count total occurrences without manual scanning
-- `grep "ERROR" logs/app.log | sort | uniq -c | sort -nr` → rank errors by
-  frequency — the most common failure surfaces immediately
-- `tail -f logs/app.log | grep "ERROR"` → monitor live logs and filter
-  for failures in real time — this is how production systems are watched
+- `grep "ERROR" text-lab/logs/app.log` → extract all failure events instantly
+- `grep -c "ERROR" text-lab/logs/app.log` → count total occurrences without manual scanning
+- `grep "ERROR" text-lab/logs/app.log | sort | uniq -c | sort -nr` → rank errors by frequency — the most common failure surfaces immediately
+- `tail -f text-lab/logs/app.log | grep "ERROR"` → monitor live logs and filter for failures in real time — this is how production systems are watched
 
 **Data Quality Analysis:**
-- `sort data/users.txt | uniq -d` → expose duplicate records
-- `sort data/users.txt | uniq` → produce a clean deduplicated dataset
-- `sort data/users.txt | uniq -c` → count how many times each user appears —
-  frequency over 1 signals corruption
+- `sort text-lab/data/users.txt | uniq -d` → expose duplicate records
+- `sort text-lab/data/users.txt | uniq` → produce a clean deduplicated dataset
+- `sort text-lab/data/users.txt | uniq -c` → count how many times each user appears — frequency over 1 signals corruption
 - Reduced dataset from 16 rows to 13 clean unique users
 
 **Numeric Analysis:**
-- `sort -n data/transactions.txt` → rank values lowest to highest
-- `sort -nr data/transactions.txt` → rank highest to lowest —
-  surfaces outliers immediately
-- `sort data/transactions.txt | uniq -c | sort -nr` → frequency distribution —
-  repeated transaction amounts can signal automated fraud or system bugs
+- `sort -n text-lab/data/transactions.txt` → rank values lowest to highest
+- `sort -nr text-lab/data/transactions.txt` → rank highest to lowest — surfaces outliers immediately
+- `sort text-lab/data/transactions.txt | uniq -c | sort -nr` → frequency distribution — repeated transaction amounts can signal automated fraud or system bugs
 
 **File Discovery:**
 - `find . -name "*.txt"` → locate all text files without knowing their location
 - `find . -name "*.log"` → locate all log files across the entire directory tree
-- Wildcards (`data/*.txt`, `logs/*.log`) → operate across multiple files
-  in one command — essential in large systems with hundreds of files
+- Wildcards (`text-lab/data/*.txt`, `text-lab/logs/*.log`) → operate across multiple files in one command — essential in large systems
 
 ---
 
@@ -83,37 +77,48 @@ transaction patterns — to simulate genuine system investigation.
 
 | Issue | Cause | Fix |
 |---|---|---|
-| `grep "error"` returned nothing | File used uppercase `ERROR` | `grep -i "error"` for case-insensitive search |
-| `wc -l < app.log` failed | Wrong path — not in logs/ directory | `wc -l < logs/app.log` |
-| `tail -f logs.app` failed | Dot instead of slash in filename | `tail -f logs/app.log` |
-| `ls *.txt` returned nothing | No .txt files in current directory | `ls data/*.txt` — wildcards need correct location |
-| `find . -name "data/users.txt"` returned nothing | find -name takes filename not path | `find . -name "users.txt"` |
-| `cat logs/app.log \| grep "ERROR"` worked but inefficient | Unnecessary cat process | `grep "ERROR" logs/app.log` directly |
-| Duplicates with different case not caught | `uniq` is case-sensitive | `sort file \| uniq -i` |
+| `grep "error"` returned nothing | File used uppercase `ERROR` | `grep -i "error"` |
+| `wc -l < app.log` failed | Wrong path | `wc -l < text-lab/logs/app.log` |
+| `tail -f logs.app` failed | Incorrect filename | `tail -f text-lab/logs/app.log` |
+| `ls *.txt` returned nothing | Wrong directory | `ls text-lab/data/*.txt` |
+| `find . -name "data/users.txt"` returned nothing | Wrong pattern | `find . -name "users.txt"` |
+| `cat file \| grep` used | Inefficient | `grep "ERROR" file` |
+| Case duplicates missed | Case sensitivity | `uniq -i` |
 
 ---
 
 ## Key Pipelines
 
-```bash
-# Count total errors
-grep "ERROR" logs/app.log | wc -l
+    # Count total errors
+    grep "ERROR" text-lab/logs/app.log | wc -l
 
-# Rank errors by frequency — most common failure first
-grep "ERROR" logs/app.log | sort | uniq -c | sort -nr
+    # Rank errors by frequency
+    grep "ERROR" text-lab/logs/app.log | sort | uniq -c | sort -nr
 
-# Detect duplicate users
-sort data/users.txt | uniq -d
+    # Detect duplicate users
+    sort text-lab/data/users.txt | uniq -d
 
-# Transaction frequency distribution
-sort data/transactions.txt | uniq -c | sort -nr
+    # Transaction frequency distribution
+    sort text-lab/data/transactions.txt | uniq -c | sort -nr
 
-# Monitor live logs for errors only
-tail -f logs/app.log | grep "ERROR"
+    # Monitor live logs
+    tail -f text-lab/logs/app.log | grep "ERROR"
 
-# Find all log files from any location
-find . -name "*.log"
-```
+    # Find all log files
+    find . -name "*.log"
+
+---
+
+## Improvements (After Initial Completion)
+
+- Learned `grep -i` for case-insensitive matching  
+  Example: `grep -i "error" text-lab/logs/app.log`
+
+- Learned `grep -v` to exclude matches  
+  Example: `grep -v "ERROR" text-lab/logs/app.log`
+
+- Learned `grep -E` for multiple conditions (OR logic)  
+  Example: `grep -E "ERROR|WARNING" text-lab/logs/app.log`
 
 ---
 
@@ -122,8 +127,8 @@ find . -name "*.log"
 The difference between a beginner and an engineer is not knowing more commands —
 it is knowing how to chain them.
 
-A single pipe turns a raw log file into an instant answer.
-`grep | sort | uniq -c | sort -nr` is not four commands —
+A single pipe turns a raw log file into an instant answer.  
+`grep | sort | uniq -c | sort -nr` is not four commands —  
 it is one question: *what is failing most often?*
 
 Never open a file manually when a command can answer the question faster.
