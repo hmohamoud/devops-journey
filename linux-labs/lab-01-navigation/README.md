@@ -89,6 +89,30 @@ Demonstrates real debugging workflow:
 
 ---
 
+## Improvements (After Initial Completion)
+
+- Learned `ls -a` to view hidden files not shown in standard listings  
+  Example: `ls -a` → reveals `.git`, `.env`, hidden config files
+
+- Learned `mkdir -p` to create nested directories in a single command  
+  Example: `mkdir -p projects/app/src` → creates full structure without manual steps
+
+- Learned `cp -r` to copy directories recursively (not just files)  
+  Example: `cp -r logs backup/` → duplicates entire directory and contents
+
+- Learned `rm -r` to delete directories containing files  
+  Example: `rm -r temp/` → removes folder and everything inside
+
+- Learned `rm -rf` to force delete without prompts (use carefully)  
+  Example: `rm -rf build/` → immediate deletion of directory and contents
+
+- Clarified difference between directory removal commands:  
+  Example:  
+  `rmdir empty-folder/` → works only if empty  
+  `rm -r folder/` → removes folder with contents
+
+---
+
 ## Key Takeaway
 
 Linux does not guess — every command depends on correct paths and context.  
