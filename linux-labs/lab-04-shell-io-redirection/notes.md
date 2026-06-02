@@ -449,4 +449,3 @@ Compare command outputs:
 | `--help` | quick help |
 | `man` | full manual |
 
-````
