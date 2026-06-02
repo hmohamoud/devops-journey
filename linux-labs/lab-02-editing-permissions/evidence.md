@@ -1,4 +1,3 @@
-cat > evidence.md <<'EOF'
 # Evidence
 
 ## Completed Tasks
@@ -201,4 +200,3 @@ Always check permissions before execution
   - no w → can’t edit
   - no x → can’t run
 - most issues can be solved by inspecting first, then fixing logically
-EOF
