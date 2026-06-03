@@ -1,7 +1,7 @@
-cat > notes.md <<'EOF'
 # Notes
 
 ## Project Summary
+
 This mini-project is an Automated Incident Report System built with Bash.
 
 The goal is to scan sample log files, detect ERROR and WARNING lines, count them, and generate a readable incident report.
@@ -13,76 +13,148 @@ This helps me practise turning Linux commands into a small automation tool inste
 ## What I Learned
 
 ### Shebang
-`#!/bin/bash` must be the first line of every Bash script so the system knows which interpreter to use.
+
+```bash
+#!/bin/bash
+```
+
+Must be the first line of every Bash script so the system knows which interpreter to use.
+
+---
 
 ### Command Substitution
-`$(command)` stores the output of a command inside a variable.
 
-Example:
+```bash
+timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+```
 
-`timestamp=$(date +"%Y-%m-%d_%H-%M-%S")`
+Stores the output of a command inside a variable.
+
+---
 
 ### Variable Assignment
-No spaces around `=` when assigning variables.
 
-Correct:
+```bash
+name="value"      # correct
+name = "value"    # incorrect — spaces break assignment
+```
 
-`name="value"`
+Bash does not allow spaces around `=` when assigning variables.
 
-Incorrect:
-
-`name = "value"`
+---
 
 ### Quoting Variables
-Always use `"$variable"` instead of `$variable` to prevent Bash breaking on spaces or special characters.
 
-### if Statements
-Bash needs spaces inside brackets: `[ condition ]`
+```bash
+"$report_filename"    # correct
+$report_filename      # incorrect — can break on spaces
+```
 
-An `if` statement must also close with `fi`.
+Quoting variables helps prevent Bash from breaking on spaces or special characters.
+
+---
+
+### If Statements
+
+```bash
+if [ -f logs/app.log ] && [ -f logs/auth.log ]; then
+    # do something
+fi
+```
+
+Spaces are required inside brackets.
+
+An `if` statement must close with `fi`.
+
+---
 
 ### File and Directory Checks
-`-f` checks if a file exists.
 
-`-d` checks if a directory exists.
+```bash
+-f    # checks if a file exists
+-d    # checks if a directory exists
+```
+
+I used `-f` to check that the log files existed before scanning them.
+
+---
 
 ### Combining Conditions
-`&&` combines two conditions. Both must be true.
+
+```bash
+[ -f logs/app.log ] && [ -f logs/auth.log ]
+```
+
+Both conditions must be true.
+
+---
 
 ### grep Flags
-`-i` makes search case-insensitive.
 
-`-E` enables extended regex like `"error|warning"`.
+```bash
+-i    # case-insensitive
+-E    # extended regex e.g. "error|warning"
+-h    # hides filename prefix from results
+```
 
-`-h` hides the filename prefix from results.
+These flags helped the script find ERROR and WARNING lines cleanly.
+
+---
 
 ### Timestamp Format
-`date +"%Y-%m-%d_%H-%M-%S"` formats a timestamp that is safe for filenames.
 
-It has no spaces, no colons, and sorts chronologically.
+```bash
+date +"%Y-%m-%d_%H-%M-%S"
+```
+
+No spaces, no colons, sorts chronologically, and is safe for filenames.
+
+---
 
 ### Comparing Numbers
+
+```bash
+if [ "$count_error" -eq 0 ]; then
+```
+
 `-eq` compares numbers in Bash conditions.
 
-Example:
-
-`[ "$count" -eq 0 ]`
+---
 
 ### Redirection
-`>>` appends output to a file without overwriting it.
+
+```bash
+echo "Incident Report" >> "$report_filename"
+```
+
+`>>` appends without overwriting.
 
 I used it to build the report line by line.
 
+---
+
 ### Pipes
+
+```bash
+grep -ih "error" logs/app.log logs/auth.log | wc -l
+```
+
 A pipe sends the output of one command into another.
 
-Example:
-
-`grep -ih "error" logs/app.log | wc -l`
+---
 
 ### Sorting Repeated Lines
-`sort | uniq -c | sort -nr` finds and ranks repeated lines by frequency.
+
+```bash
+sort | uniq -c | sort -nr
+```
+
+Finds and ranks repeated lines from most to least frequent.
+
+---
 
 ### Automation
+
 Instead of running commands manually every time, a Bash script combines them into one repeatable tool.
-Scripts can use variables, conditions, and flow — unlike running commands one at a time.
+
+Scripts can use variables, conditions, and flow — unlike typing commands one at a time.
