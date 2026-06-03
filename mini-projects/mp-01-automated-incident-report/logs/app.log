@@ -1,0 +1,21 @@
+2026-06-02 19:16:03 INFO User Logged in
+2026-05-19 19:03:03 INFO User Logged in
+2026-06-02 19:16:03 ERROR Database connection failed
+2026-06-02 19:16:03 ERROR Database connection failed
+2026-06-02 19:16:03 WARNING Memory usage getting high
+2026-06-02 19:16:03 WARNING CPU usage at almost full capacity
+2026-11-19 5:11:19 INFO User signed out
+2026-06-02 19:16:03 WARNING Memory usage getting high
+2029-11-03 11:16:03 ERROR Failed to connect to database dp-prod-01
+2029-11-03 11:16:03 ERROR Failed to connect to database dp-prod-01
+2026-06-02 19:16:03 ERROR Database connection failed
+2026-04-19 09:03:01 INFO User logout successful user_id=1024
+2026-04-19 09:04:40 INFO Scheduled backup started
+2026-04-19 09:05:11 INFO Scheduled backup completed
+2026-04-19 09:05:55 WARNING High memory usage detected: 82%
+2026-04-19 09:06:20 ERROR Timeout while calling payment-service
+2026-04-19 09:07:33 INFO User login successful user_id=2048
+2026-04-19 09:08:12 WARNING CPU usage high: 85%
+2026-04-19 09:06:20 ERROR Timeout while calling payment-service
+2026-04-19 09:08:12 WARNING CPU usage high: 85%
+

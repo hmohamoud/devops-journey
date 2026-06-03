@@ -1,0 +1,10 @@
+2026-06-03 09:00:01 INFO User hamza logged in successfully
+2026-06-03 09:02:14 WARNING Failed login attempt for user admin from 192.168.1.20
+2026-06-03 09:04:33 INFO User sarah logged out
+2026-06-03 09:06:10 ERROR Authentication service timeout
+2026-06-03 09:08:45 WARNING Failed login attempt for user root from 192.168.1.21
+2026-06-03 09:10:02 INFO Password reset requested for user adam
+2026-06-03 09:12:29 ERROR Invalid token received during login
+2026-06-03 09:15:17 warning Failed login attempt for user guest from 192.168.1.22
+2026-06-03 09:18:40 error Authentication service timeout
+2026-06-03 09:21:05 INFO User hamza logged out
