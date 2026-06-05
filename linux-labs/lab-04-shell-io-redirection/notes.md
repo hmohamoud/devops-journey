@@ -306,9 +306,11 @@ Environment variable = current shell plus child processes.
 
 Runs a command with administrator/root privileges, if the user is allowed to use sudo.
 
-### Example
+### Key commands
 
-`sudo apt update`
+- `sudo` — runs a single command with elevated permissions
+- `sudo su` — switches to root entirely, use with caution
+- `whoami` — checks which user you are currently running as
 
 ### Use when
 
