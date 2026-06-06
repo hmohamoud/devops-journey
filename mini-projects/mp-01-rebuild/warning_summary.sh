@@ -2,10 +2,15 @@
 report_directory="reports"
 errors_directory="errors"
 timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
-report_filename="$report_directory"/incident-report-$timestamp.txt"
-errors_filename="$errors_directory"/errors-report-$timestamp.txt"
-mkdir -p "$report_directory"
-mkdir -p "$errors_directory"
+if [ ! -d "$report_directory" ]; then #this was a smart thing i came up with where i decided to think if it doesnt exist make the report directory otherwise the report should go inside the existing dir
+    mkdir -p "$report_directory"
+fi
+if [ ! -d "$errors_directoy" ]; then
+    mkdir -p "$errors_directory"
+fi
+errors_filename="$errors_directory/errors-report-$timestamp.txt"
+report_filename="$report_directory/warning-summary-$timestamp.txt"
+
 if [ -f logs/app.log ] && [ -f logs/auth.log ]; then #This mean it checks if logs/app exists and logs/app.log exists
     scan_warning=$(grep -ih "warning" logs/app.log logs/auth.log)
     count_warning=$(grep -ih "warning" logs/app.log logs/auth.log | wc -l)
