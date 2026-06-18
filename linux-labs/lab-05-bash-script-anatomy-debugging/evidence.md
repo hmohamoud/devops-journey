@@ -33,8 +33,6 @@
 - Ran with `./` — failed until `chmod +x` was added
 - Fixed with `chmod +x bash-lab/scripts/hello_script.sh`
 
-Screenshot: `screenshots/hello-script.png`
-
 ---
 
 ### Task 2 — Variables and Quoting
@@ -60,8 +58,6 @@ Screenshot: `screenshots/hello-script.png`
 - First run failed with `too many arguments` error — fixed bracket syntax
 - Final output correctly printed FOUND and MISSING for each path
 
-Screenshot: `screenshots/check-inputs.png`
-
 ---
 
 ### Task 5 — Warning Detector
@@ -70,8 +66,6 @@ Screenshot: `screenshots/check-inputs.png`
 - Confirmed warnings found message when file existed
 - Renamed app.log to test missing file path — missing file message appeared
 - Restored file and confirmed script returned to normal
-
-Screenshot: `screenshots/warning-detector.png`
 
 ---
 
@@ -91,11 +85,9 @@ Screenshot: `screenshots/warning-detector.png`
 
 ### Task 8 — Exit Codes
 - Created `bash-lab/scripts/exit_code_validator.sh`
-- Tested existing file — exit 0 confirmed
-- Tested missing file — exit 1 confirmed
-- Tested no argument — exit 2 confirmed
-
-Screenshot: `screenshots/exit-codes.png`
+- Tested existing file — exit 0 confirmed with `echo $?`
+- Tested missing file — exit 1 confirmed with `echo $?`
+- Tested no argument — exit 2 confirmed with `echo $?`
 
 ---
 
@@ -112,8 +104,6 @@ Screenshot: `screenshots/exit-codes.png`
 - Saw every line execute with variable values expanded
 - Added `set -x` and `set +x` inside the script
 - Confirmed trace shows exactly which line and variable caused the failure
-
-Screenshot: `screenshots/bash-x-trace.png`
 
 ---
 
@@ -148,14 +138,9 @@ Screenshot: `screenshots/bash-x-trace.png`
 - Tested missing file — exit 1 confirmed
 - Tested no arguments — exit 2 confirmed
 
-Screenshot: `screenshots/pattern-report-error.png`
-Screenshot: `screenshots/pattern-report-no-match.png`
-
 ---
 
 ## Break/Fix Logs
-
----
 
 ### Issue 1 — Wrong shebang
 **What I tried:** `!#/bin/bash`
@@ -202,7 +187,7 @@ Screenshot: `screenshots/pattern-report-no-match.png`
 
 ---
 
-### Issue 6 — Missing space before ]
+### Issue 6 — Missing space inside brackets
 **What I tried:** `if [! -f bash-lab/input/app.log ]; then`
 **What happened:** Bash did not parse the condition correctly
 **Why it happened:** Bash requires a space after [ and before ]
@@ -240,7 +225,7 @@ Screenshot: `screenshots/pattern-report-no-match.png`
 
 ### Issue 10 — Wrong working directory
 **What I tried:** Ran script from inside bash-lab/scripts/
-**What happened:** cat bash-lab/input/app.log failed — no such file or directory
+**What happened:** Script failed — no such file or directory for app.log
 **Why it happened:** The relative path bash-lab/input/app.log only resolves from the lab root
 **How I fixed it:** Navigated back to lab root before running the script
 **Prevention:** Always know which directory you are running from
@@ -252,15 +237,15 @@ Screenshot: `screenshots/pattern-report-no-match.png`
 **What happened:** Bash said command not found
 **Why it happened:** Missing space between set and -x — Bash read it as one word
 **How I fixed it:** Changed to `set -x`
-**Prevention:** set -x and set +x need a space
+**Prevention:** set -x and set +x always need a space
 
 ---
 
-### Issue 12 — check_inputs.sh printing wrong for missing path
-**What I tried:** First version of check_inputs.sh gave too many arguments error on directory checks
-**What happened:** Directory checks used wrong syntax
-**Why it happened:** Used -f for directories instead of -d
-**How I fixed it:** Changed directory checks to use -d
+### Issue 12 — Wrong flag for directory check
+**What I tried:** Used -f to check if a directory existed
+**What happened:** Check gave wrong result
+**Why it happened:** -f checks files, not directories
+**How I fixed it:** Changed to -d for directory checks
 **Prevention:** -f for files, -d for directories
 
 ---

@@ -5,7 +5,7 @@ timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
 if [ ! -d "$report_directory" ]; then #this was a smart thing i came up with where i decided to think if it doesnt exist make the report directory otherwise the report should go inside the existing dir
     mkdir -p "$report_directory"
 fi
-if [ ! -d "$errors_directoy" ]; then
+if [ ! -d "$errors_directory" ]; then
     mkdir -p "$errors_directory"
 fi
 errors_filename="$errors_directory/errors-report-$timestamp.txt"
