@@ -1,0 +1,12 @@
+2026-06-06 10:00:01 INFO Application started
+2026-06-06 10:01:10 WARNING High memory usage detected
+2026-06-06 10:02:22 ERROR Database connection failed
+2026-06-06 10:03:05 INFO User login successful
+2026-06-06 10:04:18 WARNING High memory usage detected
+2026-06-06 10:05:44 ERROR Payment service timeout
+2026-06-06 10:06:30 INFO Health check passed
+2026-06-06 10:07:12 WARNING Slow API response time
+2026-06-06 10:08:55 ERROR Database connection failed
+2026-06-06 10:09:40 INFO Background job completed
+2026-06-06 10:10:25 WARNING Slow API response time
+2026-06-06 10:11:50 ERROR Payment service timeout

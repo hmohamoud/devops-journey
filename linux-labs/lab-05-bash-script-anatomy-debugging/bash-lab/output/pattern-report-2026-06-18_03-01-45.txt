@@ -1,0 +1,6 @@
+Pattern Report
+Generated: 2026-06-18_03-01-45
+File scanned: bash-lab/input/app.log
+Pattern searched: CRITICAL 
+Match count:        0
+No matches found

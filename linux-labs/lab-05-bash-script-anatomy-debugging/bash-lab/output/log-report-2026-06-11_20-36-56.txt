@@ -1,0 +1,22 @@
+Report Generated: 2026-06-11_20-36-56
+
+File scanned: bash-lab/input/app.log
+
+Error count:
+
+       4
+
+Warning count:
+
+       4
+
+Matching errors and warning lines:
+
+2026-06-06 10:01:10 WARNING High memory usage detected
+2026-06-06 10:02:22 ERROR Database connection failed
+2026-06-06 10:04:18 WARNING High memory usage detected
+2026-06-06 10:05:44 ERROR Payment service timeout
+2026-06-06 10:07:12 WARNING Slow API response time
+2026-06-06 10:08:55 ERROR Database connection failed
+2026-06-06 10:10:25 WARNING Slow API response time
+2026-06-06 10:11:50 ERROR Payment service timeout

@@ -1,0 +1,9 @@
+Pattern Report
+Generated: 2026-06-18_02-34-12
+File scanned: bash-lab/input/app.log
+Pattern searched: WARNING 
+Match count:        4
+2026-06-06 10:01:10 WARNING High memory usage detected
+2026-06-06 10:04:18 WARNING High memory usage detected
+2026-06-06 10:07:12 WARNING Slow API response time
+2026-06-06 10:10:25 WARNING Slow API response time

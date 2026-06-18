@@ -1,0 +1,9 @@
+Pattern Report
+Generated: 2026-06-18_02-33-27
+File scanned: bash-lab/input/app.log
+Pattern searched: ERROR 
+Match count:        4
+2026-06-06 10:02:22 ERROR Database connection failed
+2026-06-06 10:05:44 ERROR Payment service timeout
+2026-06-06 10:08:55 ERROR Database connection failed
+2026-06-06 10:11:50 ERROR Payment service timeout

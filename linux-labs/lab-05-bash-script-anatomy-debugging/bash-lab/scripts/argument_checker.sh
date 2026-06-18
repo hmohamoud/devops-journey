@@ -1,0 +1,13 @@
+#!/bin/bash
+first_argument=$1
+second_argument=$2
+all_argument=$@
+if [ "$#" -eq 0 ]; then
+	echo "No arguments provided"
+	echo "Usage: ./argument_checker.sh FILE PATTERN"
+else
+	echo "First argument: $first_argument"
+	echo "Second argument: $second_argument"
+	echo "All arguments: $all_argument"
+	echo "Number of arguments: $#"
+fi
