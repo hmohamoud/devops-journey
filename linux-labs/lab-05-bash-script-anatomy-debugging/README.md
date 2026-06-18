@@ -1,4 +1,3 @@
-cat > linux-labs/lab-05-bash-script-anatomy-debugging/README.md <<'EOF'
 # Lab 05 — Bash Script Anatomy, Conditions & Debugging
 
 **Environment:** macOS Sequoia | Zsh | VS Code Terminal | Apple Silicon (M-series)
