@@ -1,4 +1,3 @@
-cat > instructions.md <<'EOF'
 # Lab 05 — Bash Script Anatomy, Conditions & Debugging
 
 ## Objective
