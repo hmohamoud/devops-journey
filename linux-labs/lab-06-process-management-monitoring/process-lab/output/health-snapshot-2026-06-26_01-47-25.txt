@@ -1,0 +1,27 @@
+Report title 2026-06-26_01-47-25
+System uptime
+
+ 1:47  up 3 days, 18:19, 1 user, load averages: 1.50 1.42 1.42
+Memory usage
+
+
+Disk Usage
+
+Filesystem        Size    Used   Avail Capacity iused ifree %iused  Mounted on
+/dev/disk3s1s1   228Gi    14Gi   152Gi     9%    426k  1.6G    0%   /
+devfs            201Ki   201Ki     0Bi   100%     696     0  100%   /dev
+/dev/disk3s6     228Gi    20Ki   152Gi     1%       0  1.6G    0%   /System/Volumes/VM
+/dev/disk3s2     228Gi    12Gi   152Gi     8%    1.3k  1.6G    0%   /System/Volumes/Preboot
+/dev/disk3s4     228Gi   724Mi   152Gi     1%     298  1.6G    0%   /System/Volumes/Update
+/dev/disk1s2     500Mi   6.0Mi   481Mi     2%       1  4.9M    0%   /System/Volumes/xarts
+/dev/disk1s1     500Mi   5.8Mi   481Mi     2%      39  4.9M    0%   /System/Volumes/iSCPreboot
+/dev/disk1s3     500Mi   2.0Mi   481Mi     1%      99  4.9M    0%   /System/Volumes/Hardware
+/dev/disk3s5     228Gi    48Gi   152Gi    24%    659k  1.6G    0%   /System/Volumes/Data
+map auto_home      0Bi     0Bi     0Bi   100%       0     0     -   /System/Volumes/Data/home
+/dev/disk3s1     228Gi    14Gi   152Gi     9%    427k  1.6G    0%   /System/Volumes/Update/mnt1
+
+TOP 5 processes by CPU Usage
+
+Top 5 processes by Memory usage
+
+
