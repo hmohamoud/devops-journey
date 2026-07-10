@@ -1,0 +1,5 @@
+shell-lab/errors:
+a.err
+mnm.txt
+stderr_only.txt
+stderr_test.txt

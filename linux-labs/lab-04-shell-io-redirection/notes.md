@@ -451,3 +451,5 @@ Compare command outputs:
 | `--help` | quick help |
 | `man` | full manual |
 
+
+i forgot to include the syntax for seperation streams ls fakefolder shell-lab/errors > shell-lab/output/mnm.txt 2> shell-lab/errors/mnm.txt
