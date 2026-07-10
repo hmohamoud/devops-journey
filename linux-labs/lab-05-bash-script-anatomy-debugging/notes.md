@@ -304,4 +304,3 @@ Use when:
 
 Risk: sudo is powerful. Misuse can delete files, break permissions, or damage the system.
 Only use it when elevated access is genuinely needed.
-EOF
