@@ -2,634 +2,657 @@
 
 ## Objective
 
-Develop the ability to inspect, control, and reason about running processes and system resources on a Linux machine.
+Develop the ability to diagnose, control, and resolve process-related incidents on a live Linux system.
 
-This lab exists to turn you from someone who writes scripts in isolation into someone who can answer the question every on-call engineer eventually gets asked: **"the server is slow, what's going on?"**
-
-By the end of this lab, you must be able to:
-
-- list and interpret running processes
-- distinguish foreground and background jobs
-- move jobs between foreground and background
-- send signals to processes correctly
-- kill a misbehaving process safely
-- detach a long-running process from your terminal session
-- read system load, memory, and disk usage
-- use process substitution correctly
-- explain what a PID and PPID are
-- diagnose "why is this server slow" using only built-in tools
+You must be able to:
+- identify what processes are doing and why
+- classify incidents correctly before acting
+- kill, control, and manage processes safely
+- trace parent-child relationships and process trees
+- diagnose slow systems using process state, not guesswork
 
 ---
 
 ## Scenario
 
-You are a junior DevOps engineer who just got paged. A teammate says:
+You are an on-call engineer responsible for a production Linux server.
 
-> "Something on the server is using all the CPU and we don't know what."
+Users are reporting degraded performance. You have been paged with no additional context. You do not know what is wrong. You must investigate, classify, and resolve the incident using your flow — no guessing, no skipping steps.
 
-You don't have a fancy monitoring dashboard yet. You have SSH access and the terminal. This lab trains you to handle that page using nothing but standard Linux tools.
-
-In production, weak process awareness causes:
-
-- killing the wrong process
-- restarting a service that wasn't actually the problem
-- losing a long-running job because it was tied to a terminal session that closed
-- missing the real resource bottleneck because you didn't check memory, disk, and CPU separately
-- sending the wrong signal and causing data loss
-
-A good engineer:
-
-- checks before acting
-- knows the difference between a soft kill and a hard kill
-- never blindly runs `kill -9`
-- can read `ps`, `top`, `free`, `df`, and `uptime` output fluently
-- understands that closing a terminal can kill a job unless it was detached properly
-
-This lab trains that standard.
+Each task below introduces a different failure. Your job is to find it and fix it.
 
 ---
 
-## Production Framing
+## Constraints (MANDATORY)
 
-Process management and system monitoring are the foundation of incident response in any cloud or DevOps role.
-
-Before you can build automated health checks, alerting, or deployment tooling, you need to be fluent in reading what a system is actually doing right now.
-
-This lab prepares you directly for:
-
-- Mini Project 2 — Server Health Check Reporter
-- on-call incident response
-- diagnosing resource exhaustion (CPU, memory, disk)
-- safely managing long-running background jobs
-- service troubleshooting (later labs)
-
-The goal is not to memorise flags. The goal is to build the instinct: **see a symptom → check the right tool → form a hypothesis → confirm it → act.**
-
----
-
-## Mandatory Rules
-
-- Do not run `kill -9` as your first move. Always try a normal `kill` first and explain why.
-- Before running any command, predict what you expect to see.
-- After running it, verify what you actually saw and compare.
-- Every background job you create must be intentionally managed — checked, brought to foreground, or properly detached.
-- You must explain the difference between a process and a job.
-- You must explain PID vs PPID for at least one real process on your machine.
-- Record every mistake and fix in `evidence.md`.
-- Do not move on if you cannot explain a command without looking at notes.
+- Do NOT skip steps in your flow
+- Before acting on any process, identify it first
+- Never run `kill -9` before trying `kill` first
+- After every kill, verify the process is actually gone
+- Before killing anything, ask: is this the parent or a child?
+- Every command must have a clear intention
+- Before running a command:
+  → state what you expect to see
+- After running a command:
+  → interpret the result before moving on
+- You must use your full investigation flow for every scenario
 
 ---
 
 ## Environment Setup
 
-Create this structure inside the lab folder:
-
-```text
-process-lab/
-├── scripts/
-├── logs/
-└── output/
+```bash
+open -a Docker
+docker start -ai process-lab
 ```
 
-Create one long-running test script to practise on:
-
-```text
-process-lab/scripts/long_task.sh
-```
-
-This script must:
-
-- print a message every 2 seconds for at least 60 seconds
-- include a clear identifying message like `Long task running, PID: $$`
-
-You will use this script throughout the lab to practise job control, signals, and process inspection.
-
-Verify setup with:
+Install required tools if not already present:
 
 ```bash
-pwd
-ls -R process-lab
+apt update && apt install -y procps sysstat stress-ng psmisc python3
 ```
-
-Pass condition:
-
-- `process-lab/` exists with all three folders
-- `long_task.sh` exists and is executable
-- Running it produces visible repeated output
 
 ---
 
-## Task 1 — Listing and Reading Processes
-
-Run:
-
-```bash
-ps
-ps aux
-ps -ef
-```
-
-Pass condition:
-
-- You can explain the difference between plain `ps` and `ps aux`
-- You can identify the PID column, the CPU% column, and the command column in `ps aux` output
-- You can find your own shell's PID using `ps` and confirm it with `echo $$`
-
-Then run:
-
-```bash
-ps aux | grep bash
-```
-
-Pass condition:
-
-- You can explain why this command returns at least one extra line you didn't expect (the grep process itself)
-- You know at least two ways to filter it out
+## Scenarios
 
 ---
 
-## Task 2 — PID and PPID
+### Scenario 1 — The Runaway Worker
 
-Run:
+**Alert received:**
+> Production API response times have increased significantly. Engineers report the server feels sluggish. No recent deployments.
 
-```bash
-echo $$
-ps -ef | grep $$
-```
-
-Then start a subshell:
+**Setup:**
 
 ```bash
-bash
-echo $$
-echo $PPID
-exit
+stress-ng --cpu 2 --cpu-load 85 &
 ```
 
-Pass condition:
-
-- You can explain what a PID is
-- You can explain what a PPID is
-- You can explain why the subshell's PPID matches your original shell's PID
-- You can explain this in one sentence: "Every process except the very first one has a parent."
+Investigate, classify, and resolve using the full flow.
 
 ---
 
-## Task 3 — Foreground and Background Jobs
+### Scenario 2 — The Kernel Hog
 
-Run your long-running script in the foreground first:
+**Alert received:**
+> System CPU usage is elevated. Engineers cannot identify which application is responsible. Kernel time is unusually high.
 
-```bash
-./process-lab/scripts/long_task.sh
-```
-
-Pass condition:
-
-- You confirm your terminal is blocked while it runs
-- You stop it with `Ctrl+C` and can explain what signal that sends
-
-Now run it in the background:
+**Setup:**
 
 ```bash
-./process-lab/scripts/long_task.sh &
+cat /dev/urandom > /dev/null &
+cat /dev/urandom > /dev/null &
+cat /dev/urandom > /dev/null &
+cat /dev/urandom > /dev/null &
 ```
 
-Pass condition:
-
-- Your terminal is immediately free
-- You can explain what the `&` does
-
-Check your background jobs:
-
-```bash
-jobs
-jobs -l
-```
-
-Pass condition:
-
-- You can explain the job number shown in brackets
-- You can explain the difference between the job number and the PID
+Investigate, classify, and resolve using the full flow.
 
 ---
 
-## Task 4 — Moving Jobs Between Foreground and Background
+### Scenario 3 — The Silent Leak
 
-With your background job still running from Task 3:
+**Alert received:**
+> System is slow but CPU looks fine. Engineers are confused. No high CPU processes visible in top.
 
-```bash
-fg
-```
-
-Pass condition:
-
-- The job comes to the foreground and you can see it printing in real time
-- You can explain what `fg` does
-
-Suspend it without killing it:
+**Setup:**
 
 ```bash
-Ctrl+Z
+python3 -c "
+import os, time
+procs = []
+for i in range(10):
+    p = os.fork()
+    if p == 0:
+        time.sleep(9999)
+        os._exit(0)
+    procs.append(p)
+while True:
+    time.sleep(9999)
+" &
 ```
 
-Pass condition:
-
-- You can explain the difference between `Ctrl+Z` and `Ctrl+C`
-- You can explain that the process is stopped, not terminated
-
-Check its state:
-
-```bash
-jobs
-```
-
-Pass condition:
-
-- You can identify the job as `Stopped`
-
-Resume it in the background:
-
-```bash
-bg
-```
-
-Pass condition:
-
-- The job resumes running but your terminal stays free
-- You can explain what `bg` does
+Investigate, classify, and resolve using the full flow.
 
 ---
 
-## Task 5 — Disowning and Detaching Jobs
+### Scenario 4 — The Fork Bomb
 
-Start another background job:
+**Alert received:**
+> System is becoming unresponsive. Process count is climbing rapidly. Engineers cannot SSH in reliably.
+
+**Setup:**
 
 ```bash
-./process-lab/scripts/long_task.sh &
+ulimit -u 50 && python3 -c "
+import os, time
+def fork_forever():
+    while True:
+        os.fork()
+        time.sleep(0.1)
+fork_forever()
+" &
 ```
 
-Detach it from your shell so it survives even if your terminal closes:
+**Act fast. The longer you wait the worse it gets.**
+
+**You must answer:**
+- [ ] What is the first thing you check to confirm this is a fork bomb?
+- [ ] Why do you freeze the parent before killing it?
+- [ ] What signal freezes a process without killing it?
+- [ ] What is the correct kill order?
+- [ ] How do you confirm the process count has stabilised?
+
+**Record:**
+→ Command used at each step
+→ What you saw
+→ Decision you made
+→ Action you took
+
+---
+
+### Scenario 5 — The Zombie Factory
+
+**Alert received:**
+> Process table is filling up with dead processes. System stability is at risk.
+
+**Setup:**
 
 ```bash
+python3 -c "
+import os, time, subprocess
+while True:
+    p = subprocess.Popen(['sleep', '0.1'])
+    time.sleep(0.5)
+" &
+```
+
+**You must answer:**
+- [ ] What command shows you zombie processes?
+- [ ] Can you kill a zombie directly? Why or why not?
+- [ ] What is the actual fix for a zombie storm?
+- [ ] Why is a small fixed zombie count harmless?
+- [ ] At what point does a zombie storm become dangerous?
+- [ ] How do you verify the storm has stopped?
+
+**Record:**
+→ Command used at each step
+→ What you saw
+→ Decision you made
+→ Action you took
+
+---
+
+### Scenario 6 — The Disguised Problem
+
+**Alert received:**
+> Load average is elevated. Team has already killed what they thought was the problem. System is still slow.
+
+**Setup:**
+
+```bash
+stress-ng --cpu 1 --cpu-load 40 &
+stress-ng --cpu 1 --cpu-load 40 &
+stress-ng --cpu 1 --cpu-load 40 &
+sleep infinity &
+sleep infinity &
+sleep infinity &
+sleep infinity &
+sleep infinity &
+```
+
+**You must answer:**
+- [ ] What state are the sleep processes in?
+- [ ] Does S state with 0% CPU mean they are the problem?
+- [ ] What does pidstat tell you that top does not?
+- [ ] How do you identify the actual cause when no single process dominates?
+- [ ] How do you clean up only the guilty processes without touching the innocent ones?
+
+**Record:**
+→ Command used at each step
+→ What you saw
+→ Decision you made
+→ Action you took
+
+---
+
+### Scenario 7 — The Priority Inversion
+
+**Alert received:**
+> Critical service is responding slowly even though CPU is not fully saturated. A background job appears to be competing with it.
+
+**Setup:**
+
+```bash
+stress-ng --cpu 3 --cpu-load 60 &
+```
+
+**You cannot kill the stress-ng process. Reduce its priority instead.**
+
+**You must answer:**
+- [ ] What command shows the current priority (NI column) of a process?
+- [ ] What is the nice value range and what does a higher value mean?
+- [ ] How do you change the priority of a running process?
+- [ ] Does renicing help a process in D state?
+- [ ] How do you verify the priority change took effect?
+- [ ] What is the difference between nice and renice?
+
+**Record:**
+→ Command used at each step
+→ What you saw
+→ Decision you made
+→ Action you took
+
+---
+
+### Scenario 8 — The Orphan
+
+**Alert received:**
+> A long running data export process has been running for hours. The engineer who started it has disconnected. Nobody knows if it is still running or what state it is in.
+
+**Setup:**
+
+```bash
+nohup bash -c 'while true; do echo exporting >> /tmp/export.log; sleep 2; done' &
 disown
 ```
 
-Pass condition:
+**You must answer:**
+- [ ] How do you find a process when you do not know its PID?
+- [ ] How do you confirm it is still running and making progress?
+- [ ] What does disown mean and why does the process survive terminal close?
+- [ ] How do you safely terminate a long running process without corrupting its output?
+- [ ] How do you verify it has fully stopped?
 
-- You can explain what `disown` does
-- You can explain why a normal background job dies if you close the terminal, but a disowned one does not
-
-Now test `nohup` as an alternative approach:
-
-```bash
-nohup ./process-lab/scripts/long_task.sh > process-lab/logs/nohup_test.log 2>&1 &
-```
-
-Pass condition:
-
-- You can explain what `nohup` does
-- You can explain the difference between `disown` and `nohup`
-- You can explain why output had to be redirected in the `nohup` example
+**Record:**
+→ Command used at each step
+→ What you saw
+→ Decision you made
+→ Action you took
 
 ---
 
-## Task 6 — Signals
+### Scenario 9 — The Unkillable Process
 
-Run a fresh long-running job:
+**Alert received:**
+> Engineer reports they cannot kill a process. kill and kill -9 both appear to do nothing.
 
-```bash
-./process-lab/scripts/long_task.sh &
-```
-
-Get its PID:
+**Setup:**
 
 ```bash
-jobs -l
+sleep infinity &
+PID=$!
+kill -STOP $PID
 ```
 
-Send a termination signal:
+**You must answer:**
+- [ ] What process state causes kill -9 to appear to fail?
+- [ ] What is the difference between a T state and a D state process?
+- [ ] What signal resumes a stopped process?
+- [ ] How do you distinguish T state from D state in ps output?
+- [ ] What is the correct action for each?
 
-```bash
-kill PID
-```
-
-Pass condition:
-
-- The job stops
-- You can explain that plain `kill` sends SIGTERM, a polite request to stop
-- You can explain what "clean up before dying" means — what a process might actually do when it receives SIGTERM
-
-Run another job and this time send a hard kill:
-
-```bash
-./process-lab/scripts/long_task.sh &
-kill -9 PID
-```
-
-Pass condition:
-
-- You can explain that `-9` sends SIGKILL, which cannot be caught or ignored by the process
-- You can explain why SIGTERM should always be tried first
-- You can explain one real risk of always using `kill -9`
-
-Run another job and freeze it without killing it:
-
-```bash
-./process-lab/scripts/long_task.sh &
-kill -STOP PID
-```
-
-Check its state with `ps aux`. Then resume it:
-
-```bash
-kill -CONT PID
-```
-
-Pass condition:
-
-- You can identify what the STAT column shows for a stopped process
-- You can explain the difference between SIGSTOP and SIGKILL
-- You can explain when you'd use SIGSTOP instead of SIGTERM
+**Record:**
+→ Command used at each step
+→ What you saw
+→ Decision you made
+→ Action you took
 
 ---
 
-## Task 7 — Finding and Killing Processes by Name
+### Scenario 10 — The Mixed Incident
 
-Start three background jobs:
+**Alert received:**
+> Multiple engineers are reporting different symptoms at the same time. One says CPU is high. Another says processes are unresponsive. A third says the process count looks wrong.
 
-```bash
-./process-lab/scripts/long_task.sh &
-./process-lab/scripts/long_task.sh &
-./process-lab/scripts/long_task.sh &
-```
-
-Find them all by name:
+**Setup:**
 
 ```bash
-pgrep -f long_task.sh
+stress-ng --cpu 1 --cpu-load 80 &
+python3 -c "
+import os, time
+for i in range(8):
+    p = os.fork()
+    if p == 0:
+        time.sleep(9999)
+        os._exit(0)
+while True:
+    time.sleep(9999)
+" &
+cat /dev/urandom > /dev/null &
 ```
 
-Pass condition:
+**You must answer:**
+- [ ] How do you separate multiple problems when symptoms overlap?
+- [ ] Which problem do you fix first and why?
+- [ ] How do you confirm each fix without affecting the others?
+- [ ] How do you verify full system recovery at the end?
 
-- You see three PIDs
-- You can explain what `pgrep -f` does and why `-f` was needed here
-- You can explain why you'd run `pgrep -f` before running `pkill -f`
-
-Kill them all at once:
-
-```bash
-pkill -f long_task.sh
-```
-
-Pass condition:
-
-- All three jobs are gone
-- You can confirm with `jobs` and `pgrep -f long_task.sh` returning nothing
-- You can explain the risk of `pkill` if your search pattern is too broad
+**Record:**
+→ Command used at each step
+→ What you saw
+→ Decision you made
+→ Action you took
 
 ---
 
-## Task 8 — System Load and Uptime
+### Scenario 11 — The Signal Decision
 
-Run:
+**Alert received:**
+> A service is misbehaving. You need to control it using signals — but the wrong signal will cause data loss or leave it running.
+
+**Setup:**
 
 ```bash
-uptime
-nproc
+bash -c 'trap "echo TERM caught, cleaning up; sleep 2; echo done" TERM; while true; do echo working; sleep 1; done' &
 ```
 
-Pass condition:
+**You must answer:**
+- [ ] What is the difference between SIGTERM and SIGKILL?
+- [ ] Which signal allows a process to clean up before dying?
+- [ ] Which signal cannot be caught or ignored?
+- [ ] What does SIGSTOP do and when would you use it over SIGKILL?
+- [ ] What does SIGHUP mean and why do daemons use it?
+- [ ] What is SIGINT and what terminal shortcut sends it?
 
-- You can identify the three load average numbers and which time window each represents
-- You can explain why the raw number means nothing without comparing it to `nproc`
-- You can determine whether CPU is a suspect on your machine right now and explain your reasoning
-- You can read the trend (climbing / falling / flat) and explain what each means for urgency
+**You must practice:**
+```bash
+kill -TERM <pid>     # observe it catches the signal and cleans up
+kill -STOP <pid>     # pauses it
+kill -CONT <pid>     # resume it
+kill -KILL <pid>     # force kill, no cleanup
+```
+
+**Record:**
+→ Signal used
+→ What the process did
+→ What you learned about when to use each
 
 ---
 
-## Task 9 — Memory Usage
+### Scenario 12 — The Blocked Terminal
 
-Run:
+**Alert received:**
+> An engineer accidentally started a long running backup in the foreground. The terminal is now blocked. The backup must not be interrupted.
+
+**Setup:**
+
+```bash
+bash -c 'echo backup started; while true; do echo backing up; sleep 1; done'
+```
+
+**Your terminal is now blocked. You must recover it without stopping the backup.**
+
+**You must answer:**
+- [ ] How do you suspend the foreground process without killing it?
+- [ ] How do you resume it in the background?
+- [ ] How do you list what is running in the background?
+- [ ] How do you bring it back to the foreground?
+- [ ] How do you detach it so it survives if your terminal closes?
+- [ ] What is the difference between disown and nohup?
+
+**You must use in order:**
+```
+Ctrl+Z   → suspend it
+bg       → resume in background
+jobs     → confirm it is running
+disown   → detach from terminal
+```
+
+**Record:**
+→ Command used at each step
+→ What you saw
+→ Decision you made
+→ Action you took
+
+---
+
+### Scenario 13 — The Wrong Kill
+
+**Alert received:**
+> System is slow. An engineer runs pkill python3 to clean up. Three critical services go down immediately.
+
+**Setup:**
+
+```bash
+python3 -c "import time; print('service A running'); [time.sleep(1) for _ in iter(int, 1)]" &
+python3 -c "import time; print('service B running'); [time.sleep(1) for _ in iter(int, 1)]" &
+python3 -c "import time; print('BAD PROCESS burning CPU'); exec(compile('while True: pass', '', 'exec'))" &
+```
+
+**You must kill only the bad process without touching the two services.**
+
+**You must answer:**
+- [ ] Why is pkill -f python3 dangerous here?
+- [ ] How do you check what pgrep would match before running pkill?
+- [ ] How do you identify which python3 process is the bad one?
+- [ ] How do you kill only that specific PID safely?
+- [ ] How do you verify the two services are still running after?
+
+**Record:**
+→ Command used at each step
+→ What you saw
+→ Decision you made
+→ Action you took
+
+---
+
+### Scenario 14 — The Memory Pressure Mystery
+
+**Alert received:**
+> Application is slow. CPU usage is only ~5%. No obvious process spike. Users report lag and timeouts.
+
+**Setup:**
+
+```bash
+stress-ng --vm 2 --vm-bytes 80% --timeout 60s &
+```
+
+**Your job:**
+
+CPU looks fine. Something else is causing the slowness. You must find it.
+
+**You must answer:**
+- [ ] Why is CPU low but the system still slow?
+- [ ] What does `free -h` reveal about usable memory vs cached memory?
+- [ ] Which process is actually consuming memory?
+- [ ] Is the system swapping?
+- [ ] What happens when swap starts being used heavily?
+
+**Commands you must use:**
 
 ```bash
 free -h
+ps aux --sort=-%mem | head
+vmstat 1 5
 ```
 
-Pass condition:
+**Resolution rule:**
 
-- You can identify total, used, free, and available memory
-- You can explain why "free" is almost always low on Linux and why that is not a problem
-- You can explain what "available" actually means and why it's the number that matters
-- You can explain what high swap usage tells you about the system
+```
+check free -h → available and swap columns only
+confirm with ps aux --sort=-%mem
+identify the top memory consumer
+kill or throttle it
+never act on %MEM alone without checking available and swap first
+```
+
+**Record:**
+→ Command used at each step
+→ What you saw
+→ Decision you made
+→ Action you took
 
 ---
 
-## Task 10 — Disk Usage
+### Scenario 15 — The Disk Explosion
 
-Run:
+**Alert received:**
+> Server is stable but writes are failing. Logs and uploads are breaking silently.
+
+**Setup:**
+
+```bash
+mkdir -p /mnt/faketest
+mount -t tmpfs -o size=200M tmpfs /mnt/faketest
+dd if=/dev/zero of=/mnt/faketest/bloatfile bs=10M count=18 oflag=direct status=progress
+```
+
+**Your job:**
+
+Processes are failing on write operations. Find what is consuming disk and clean it up safely.
+
+**You must answer:**
+- [ ] Is disk actually full?
+- [ ] Which filesystem is impacted?
+- [ ] What directory is growing the fastest?
+- [ ] Is `/var/log` responsible?
+- [ ] How do you clean up safely without deleting something important?
+
+**Commands you must use:**
 
 ```bash
 df -h
+du -sh /*
+du -sh /tmp/*
 ```
 
-Pass condition:
+**Resolution rule:**
 
-- You can identify which filesystem your home directory lives on
-- You can identify the percentage used for each filesystem
-- You can explain what happens to a system when a disk reaches 100%
+```
+df -h first          →  confirm which filesystem is full
+du -sh /* | sort -rh →  find the biggest directory
+drill in until you find the file
+rm the file only if safe to remove
+df -h again          →  confirm space recovered
+```
 
-Then run:
+**Record:**
+→ Command used at each step
+→ What you saw
+→ Decision you made
+→ Action you took
+
+---
+
+### Scenario 16 — Mixed Resource Saturation
+
+**Alert received:**
+> System is slow. CPU is low. Memory looks okay at first glance. Engineers disagree on root cause.
+
+**Setup:**
 
 ```bash
-du -sh process-lab/
-du -sh process-lab/*
+stress-ng --cpu 1 --cpu-load 20 &
+stress-ng --vm 1 --vm-bytes 70% &
 ```
 
-Pass condition:
+**Your job:**
 
-- You can explain the difference between `df` (filesystem-level) and `du` (directory/file-level)
-- You can identify which subfolder of `process-lab/` is using the most space
-- You can explain when you'd reach for `df` versus `du`
+Nothing is obvious. CPU looks fine. Memory looks fine at a glance. You must go deeper and find what is actually causing the slowness.
 
----
+**You must answer:**
+- [ ] Is this a CPU problem, a memory problem, or neither?
+- [ ] Why does CPU look fine but the system still lag?
+- [ ] What does swapping tell you that %MEM does not?
+- [ ] Which metric lies first — CPU or memory?
+- [ ] How do you confirm memory pressure when `free -h` looks okay at a glance?
 
-## Task 11 — Process Substitution
-
-Create two slightly different versions of a file list:
+**Commands you must use:**
 
 ```bash
-ls process-lab/scripts > process-lab/output/list1.txt
-ls process-lab/scripts process-lab/logs > process-lab/output/list2.txt
+top
+free -h
+vmstat 1 5
+ps aux --sort=-%mem | head
 ```
 
-Compare them using process substitution instead of temp files:
+**Record:**
+→ Command used at each step
+→ What you saw
+→ Decision you made
+→ Action you took
 
+---
+
+## Break/Fix Tasks (CRITICAL)
+
+You must intentionally create and resolve these failures.
+
+- [ ] Kill a child process instead of the parent in a fork scenario
 ```bash
-diff <(ls process-lab/scripts) <(ls process-lab/scripts process-lab/logs)
+python3 -c "
+import os, time
+for i in range(5):
+    p = os.fork()
+    if p == 0:
+        time.sleep(9999)
+        os._exit(0)
+while True:
+    time.sleep(9999)
+" &
 ```
+  → observe what happens to the other children
+  → correct your approach
 
-Pass condition:
-
-- You can explain what `<(...)` does and what the shell actually creates behind the scenes
-- You can explain why this avoids creating temporary files
-- You can explain the difference between `<(...)` and `$(...)`
-- You can give one other use case where `<(...)` is the right tool
-
----
-
-## Task 12 — Full Diagnostic Drill
-
-This is the final drill for the lab.
-
-Create:
-
-```text
-process-lab/scripts/health_snapshot.sh
-```
-
-The script must:
-
-1. Print a report title and timestamp
-2. Print system uptime and load average
-3. Print memory usage (`free -h`)
-4. Print disk usage (`df -h`)
-5. Print the top 5 processes by CPU usage
-6. Print the top 5 processes by memory usage
-7. Save the full report into `process-lab/output/health-snapshot-TIMESTAMP.txt`
-8. Print where the report was saved
-
-Hint for top processes by CPU:
-
+- [ ] Run `kill -9` on a process in T state
 ```bash
-ps aux --sort=-%cpu | head -6
+sleep infinity &
+PID=$!
+kill -STOP $PID
 ```
+  → observe what actually happens
+  → understand why it worked differently than D state
 
-Hint for top processes by memory:
-
+- [ ] Attempt to kill a zombie directly with kill -9
 ```bash
-ps aux --sort=-%mem | head -6
+python3 -c "
+import os, time, subprocess
+for i in range(3):
+    p = subprocess.Popen(['sleep', '0.1'])
+    time.sleep(0.3)
+" &
 ```
+  → observe the result
+  → apply the correct fix
 
-Pass condition:
-
-- Script runs without errors
-- Report file is created with a timestamp in the filename
-- Report contains all 6 required sections
-- You can explain every line
-- You can explain why this script is the seed of Mini Project 2
-
-This drill is not a mini-project. It is a controlled diagnostic-script-building test.
+- [ ] Use Ctrl+C instead of Ctrl+Z on a foreground process
+  → observe the difference
+  → understand when each is appropriate
 
 ---
 
-## Break/Fix Tasks
+## Verification Checkpoints (NO SKIPPING)
 
-You must intentionally break and fix these.
+At the end you must be able to:
 
-### Break/Fix 1 — Killing the Wrong Process
-
-Start two background jobs. Use `ps aux | grep long_task` to find both PIDs, but deliberately kill the wrong one first.
-
-Record:
-
-- which PID you killed
-- how you confirmed it was the wrong one
-- how you found the correct one
-- what you learned about double-checking PIDs before killing
-
----
-
-### Break/Fix 2 — Losing a Job by Closing the Terminal
-
-Start a background job without `disown` or `nohup`. Note its PID. Open a new terminal tab/window and check if the process is still running using `ps -ef | grep long_task`.
-
-Record:
-
-- what you expected
-- what actually happened
-- why this matters for real production work
+- [ ] Run the full investigation flow from Step 1 without referring to notes
+- [ ] Classify any incident as CPU / blocked / lifecycle / fork bomb / zombie within 60 seconds
+- [ ] Explain what R, S, D, Z, and T state mean and what action each requires
+- [ ] Use pidstat to confirm sustained vs spike before acting
+- [ ] Choose the correct signal for any situation without guessing
+- [ ] Kill processes safely using the correct signal and order
+- [ ] Find parent-child relationships using ps and ppid
+- [ ] Move a foreground process to background without killing it
+- [ ] Renice a running process and verify the change
+- [ ] Find a process by name without knowing its PID
+- [ ] Use pgrep before pkill to verify what you are about to kill
+- [ ] Explain why kill -9 sometimes appears to do nothing
+- [ ] Verify every action you take — never assume it worked
 
 ---
 
-### Break/Fix 3 — Wrong Signal
+## Success Criteria
 
-Run a background job. Send `kill -STOP PID` instead of a normal kill.
+You are successful when:
 
-Record:
-
-- what happened to the process (check with `ps aux` — note its STAT column)
-- how this differs from `kill -9`
-- how to resume it
-
----
-
-### Break/Fix 4 — pkill Too Broad
-
-Start `long_task.sh` in the background. Run `pkill -f task` instead of `pkill -f long_task.sh`.
-
-Record:
-
-- what else could have matched this broader pattern on a real system
-- why specific patterns matter
-- the corrected, safer command
-
----
-
-### Break/Fix 5 — Misreading free Output
-
-Look at `free -h` output and write down what you think "available" memory means before checking. Then verify with `man free`.
-
-Record:
-
-- your first guess
-- what it actually means
-- why the distinction matters when deciding if a system is low on memory
-
----
-
-## Verification Checkpoints
-
-You must be able to answer instantly:
-
-- What is a PID?
-- What is a PPID?
-- What does `ps aux` show that plain `ps` does not?
-- What is the difference between a process and a job?
-- What does `&` do?
-- What does `Ctrl+Z` do versus `Ctrl+C`?
-- What is the difference between `fg` and `bg`?
-- What does `disown` do?
-- What does `nohup` do, and how is it different from `disown`?
-- What signal does plain `kill` send?
-- What signal does `kill -9` send?
-- Why should you try SIGTERM before SIGKILL?
-- What does SIGSTOP do, and how is it different from SIGTERM?
-- What does `pgrep -f` do?
-- What is the risk of `pkill` with a broad pattern?
-- What do the three numbers in `uptime`'s load average mean?
-- What is the difference between "free" and "available" memory?
-- What is the difference between `df` and `du`?
-- What does `<(...)` do, and how is it different from `$(...)`?
-
----
-
-## Final Pass Standard
-
-You pass this lab only when you can build this from scratch without notes:
-
-A script that:
-
-- prints system uptime and load
-- prints memory and disk usage
-- lists the top 5 CPU-consuming processes
-- lists the top 5 memory-consuming processes
-- saves everything into a timestamped report
-- can be explained line by line
-
-And you can, without hesitation:
-
-- start a background job, suspend it, resume it, and detach it
-- find a process by name and kill it safely
-- explain why you'd choose `kill` over `kill -9` in a real incident
-
-If you cannot do this yet, repeat the lab before moving to Lab 07.
+- You run the investigation flow without skipping steps
+- You classify the problem before acting on it
+- You act on evidence not assumptions
+- You verify every action before declaring the incident resolved
+- You can explain every decision you made and why
+- You choose the right signal for the right situation every time
+- You never kill a process without confirming what it is first
+- You operate calmly and methodically under time pressure
+- You demonstrate the behaviour of a real SRE or platform engineer
