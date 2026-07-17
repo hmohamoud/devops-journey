@@ -1,0 +1,13 @@
+APP_ENV=dev
+PORT=8080
+MAX_CONNECTIONS=100
+DEBUG=true
+WORKERS=8
+LOG_LEVEL=info
+# This is a comment line
+DB_HOST=localhost
+DB_PORT=5432
+
+PAYMENT_TIMEOUT=60
+PAYMENT_RETRIES=3
+# End of config

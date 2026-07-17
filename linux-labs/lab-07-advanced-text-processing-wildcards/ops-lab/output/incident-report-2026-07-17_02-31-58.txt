@@ -1,0 +1,9 @@
+Incident Report
+Generated: 2026-07-17_02-31-58
+Log file: ops-lab/logs/app.log
+Total errors: 17
+Total warnings: 5
+Most common error:    1 2026-06-01 10:11:01 ERROR Payment gateway timeout
+First error: 2026-06-01 10:02:22
+Last error: 2026-06-01 10:11:01
+Errors after 10:04:       15
