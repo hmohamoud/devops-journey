@@ -115,10 +115,6 @@ Used this environment to reconstruct a real incident timeline, cross-reference t
 
 ![nginx verification](screenshots/nginx-verification.png)
 
-### Cross-Checking Both Logs
-
-![cross reference](screenshots/cross-reference.png)
-
 ### Configuration Investigation
 
 ![config investigation](screenshots/config-investigation.png)
@@ -242,4 +238,4 @@ That is the difference between running commands and running an incident response
 
 ## Next Step
 
-Continue to the next lab in the sequence, applying the same safe-edit and pipeline-ordering discipline to a new scenario.
+[Lab 08 — Bash Data Types, Numerics & String Manipulation](../lab-08-bash-data-types-numerics-string-manipulation/)
