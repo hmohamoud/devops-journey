@@ -1,0 +1,16 @@
+web01,192.168.1.10,running,8080,nginx
+web02,192.168.1.11,running,8080,nginx
+web03,192.168.1.12,stopped,8080,nginx
+db01,192.168.1.20,running,5432,postgres
+db02,192.168.1.21,failed,5432,postgres
+cache01,192.168.1.30,running,6379,redis
+cache02,192.168.1.31,running,6379,redis
+auth01,192.168.1.40,running,9000,auth-service
+auth02,192.168.1.41,stopped,9000,auth-service
+worker01,192.168.1.50,running,7000,job-worker
+worker02,192.168.1.51,running,7000,job-worker
+worker03,192.168.1.52,failed,7000,job-worker
+proxy01,192.168.1.60,running,443,nginx
+proxy02,192.168.1.61,running,443,nginx
+monitor01,192.168.1.70,running,9090,prometheus
+test01,192.168.1.80,,8080,
