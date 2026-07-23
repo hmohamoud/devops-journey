@@ -159,4 +159,4 @@ each time.
 
 ## Next Step
 
-[Lab 05 — Bash Script Anatomy, Conditions & Debugging](../../mini-projects/lab-05-bash-script-anatomy-debugging/)
+[Lab 05 — Bash Script Anatomy, Conditions & Debugging](../../linux-labs/lab-05-bash-script-anatomy-debugging/)
