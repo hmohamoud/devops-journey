@@ -165,4 +165,4 @@ That is the difference between reacting to an alert and running an incident like
 
 ## Next Step
 
-[Lab 07 — Advanced Text Processing & Wildcards](../lab-07-text-processing/)
+[Lab 07 — Advanced Text Processing & Wildcards](../lab-07-advanced-text-processing-wildcards/)
