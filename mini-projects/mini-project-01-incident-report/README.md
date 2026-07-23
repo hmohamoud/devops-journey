@@ -155,4 +155,8 @@ each time.
 - evidence.md — mistakes, tests, and fixes
 - challenge.md — self-test questions
 
+---
 
+## Next Step
+
+[Lab 05 — Bash Script Anatomy, Conditions & Debugging](../../mini-projects/lab-05-bash-script-anatomy-debugging/)
