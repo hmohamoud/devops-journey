@@ -1,0 +1,56 @@
+#!/bin/bash
+
+is_running() {
+
+	if [ "$1" == "running" ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+log_line() {
+	echo "$(date +%H:%M:%S) $1"
+}
+
+log_ine "Server check started"
+
+validate_args() {
+	local actual="$1"
+	local required="$2"
+	if [ "$actual" -ne "$required" ]; then
+		echo "Usage: expected $required argument(s), got $actual"
+		return 2
+	fi
+}
+
+result=$(validate_args "$#" 0)
+echo "$result"
+
+cpu_tier() {
+	local result
+	if [ "$1" -lt 40 ]; then
+		result="low"
+	elif [ "$1" -gt 40 ] && [ "$1" -lt 69 ]; then
+		result="medium"
+	elif [ "$1" -gt 70 ] && [ "$1" -lt 89 ]; then
+		result="high"
+	elif [ "$1" -gt 90 ]; then
+		result="critical"
+	fi
+	echo "$result"
+}
+
+while IFS=, read -r name ip status port service cpu uptime; do
+        tier=$(cpu_tier "$cpu")
+	echo "$name: $tier"
+done < bash-lab/data/fleet.txt
+
+while IFS=, read -r name ip status port service cpu uptime; do
+	if is_running "$status"; then
+		echo "$name is up"
+	else
+		echo "$name is down"
+	fi 		
+done < bash-lab/data/fleet.txt
+

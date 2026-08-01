@@ -1,0 +1,15 @@
+web01,192.168.1.10,running,8080,nginx,42,120
+web02,192.168.1.11,running,8080,nginx,55,120
+web03,192.168.1.12,stopped,8080,nginx,0,0
+db01,192.168.1.20,running,5432,postgres,68,300
+db02,192.168.1.21,failed,5432,postgres,0,0
+cache01,192.168.1.30,running,6379,redis,30,90
+cache02,192.168.1.31,running,6379,redis,97,90
+auth01,192.168.1.40,running,9000,auth-service,45,60
+auth02,192.168.1.41,stopped,9000,auth-service,0,0
+worker01,192.168.1.50,running,7000,job-worker,60,15
+worker02,192.168.1.51,running,7000,job-worker,72,15
+worker03,192.168.1.52,failed,7000,job-worker,0,0
+proxy01,192.168.1.60,running,443,nginx,25,200
+proxy02,192.168.1.61,running,443,nginx,28,200
+monitor01,192.168.1.70,running,9090,prometheus,15,365
