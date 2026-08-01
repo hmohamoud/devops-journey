@@ -79,34 +79,6 @@ Used this environment to drill every core loop pattern, build a set of reusable 
 
 ---
 
-## Proof
-
-### Loops — interleaved vs two-pass output, filtering, and counters
-
-![loops](screenshots/loops.png)
-
-### Functions — scoping proof (local vs no local)
-
-![functions scoping](screenshots/functions-scoping.png)
-
-### Conditionals — if/elif/case and combined regex + AND logic
-
-![conditionals](screenshots/conditionals.png)
-
-### break/continue — filtering, early stop at cache02, nested-loop behavior
-
-![break-continue](screenshots/break-continue.png)
-
-### Capstone — fleet-report.sh breaking at cache02, exit code 1
-
-![fleet report break](screenshots/fleet-report-break.png)
-
-### Capstone — fleet-report.sh full run with cache02 removed, exit code 0
-
-![fleet report clean](screenshots/fleet-report-clean.png)
-
----
-
 ## Break/Fix Summary
 
 | Issue | Cause | Fix |
@@ -202,4 +174,4 @@ That is the difference between a script that filters data and a script that repo
 
 ## Next Step
 
-[Lab 10 — Error Handling & Production Debugging](../lab-10-error-handling-production-debugging /)
+[Lab 10 — Error Handling & Production Debugging](../lab-10-error-handling-production-debugging/)
