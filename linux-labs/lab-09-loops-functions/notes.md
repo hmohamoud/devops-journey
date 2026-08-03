@@ -74,7 +74,54 @@ tier=$(cpu_tier "$cpu")
 
 ---
 
-## 6. Global vs Local Variables
+## 6. Function Definition Order — Define Before You Call
+
+**The rule:** when calling or mentioning a function, the function's definition needs to appear **before** the line that calls it. Bash reads a script top to bottom, and it has to already know a function exists — because it already read the definition — before it can run a call to that function.
+
+**This is INCORRECT — the function is called before it's defined:**
+
+```bash
+#!/bin/bash
+
+is_running "running"
+
+is_running() {
+    if [ "$1" = "running" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+echo $?
+```
+
+At the point `is_running "running"` runs, Bash hasn't read the function definition yet — it doesn't exist as far as the script knows, so the call fails.
+
+**This is CORRECT — the definition comes first, the call comes after:**
+
+```bash
+#!/bin/bash
+
+is_running() {
+    if [ "$1" = "running" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+is_running "running"
+
+echo $?
+```
+
+Now, by the time `is_running "running"` runs, Bash has already read and registered the function definition above it, so the call works correctly.
+
+**One-sentence rule to remember:** function definitions always go at the top (or at least earlier in the script than any line that calls them) — never call a function before Bash has had a chance to read its definition.
+
+---
+
+## 7. Global vs Local Variables
 
 ### Global variables
 
@@ -124,7 +171,7 @@ echo "$secret"    # prints: nothing — $secret was never accessible out here, e
 
 ---
 
-## 7. `case` vs `if`/`elif`
+## 8. `case` vs `if`/`elif`
 
 **Same variable, multiple values → `case`.**
 **Different checks entirely → `if`/`elif`.**
@@ -160,7 +207,7 @@ In an `if`/`elif` chain, Bash checks **top to bottom** and stops at the **first 
 
 ---
 
-## 8. `return` vs `echo`
+## 9. `return` vs `echo`
 
 **`return` is only for true/false/status codes.**
 
@@ -208,6 +255,7 @@ echo "$result"
 - Exit codes: `0` = success, non-zero = failure. This is what `if` actually checks.
 - Brackets (`[ ]`/`[[ ]]`) are for testing values only; commands/functions go straight after `if` with no brackets.
 - Function arguments: `$1`, `$2`, `$3`... in call order; capture output with `result=$(function_name args)`.
+- A function must be **defined before** it's called — Bash reads top to bottom, and a call to a function it hasn't read yet will fail.
 - No `local` → variable is global, changes are permanent and visible everywhere.
 - `local` → variable is scoped to the function, cannot be read outside it, ever.
 - `case` → one variable checked against many known values/patterns.
