@@ -47,6 +47,10 @@
 
 ## 7. `trap ... EXIT` — Guaranteed Cleanup
 
+**The succinct version:** `trap ... EXIT` means *"no matter what happens, do this on the way out."*
+
+It fires every single time the script ends — success, failure, `exit 1`, even Ctrl+C. It's your guaranteed cleanup/summary, because you can't predict every way a script might die, but you can guarantee this one thing always runs.
+
 **The rule:** without `trap`, cleanup only happens if the script actually reaches that line. With `trap`, cleanup happens no matter what — success or failure, anywhere in the script.
 
 **Without trap (works, but only if nothing fails first):**
@@ -71,6 +75,10 @@ Even though line 3 fails and the script dies right there, the trap still fires a
 ---
 
 ## 8. `trap ... ERR` — Catches the Failure at the Moment It Happens
+
+**The succinct version:** `trap ... ERR` means *"the moment something goes wrong, do this."*
+
+It fires only when a command actually fails (under `set -e`). It's your failure logger — it catches the exact moment of breakage, before the script even finishes exiting.
 
 **The rule:** `ERR` fires immediately, right when a command fails — before the script has actually finished exiting. It tells you *what broke and where*, not just *that* something ended.
 
@@ -105,7 +113,16 @@ Script exiting
 
 ---
 
-## 9. `set` + `trap` vs `shellcheck`
+## 9. The Two-Line Summary — Memorize This
+
+- **`EXIT` = "we're leaving, wrap it up."** Fires on the way out, every time, no matter how the script got there.
+- **`ERR` = "something just broke, log it."** Fires at the exact moment of failure, before the script has even finished exiting.
+
+Put together: **ERR catches the failure. EXIT closes the door — every time, no matter how you left.**
+
+---
+
+## 10. `set` + `trap` vs `shellcheck`
 
 `set -euo pipefail` and `trap` (both `EXIT` and `ERR`) are the main production safety feature.
 
@@ -123,6 +140,6 @@ You write `shellcheck` on the terminal when running the script.
 - `set -o pipefail` — `$?` reflects failure anywhere in a pipeline, not just the last command.
 - `set -euo pipefail` — all three combined, right below the shebang, every script, every time.
 - `;` — always runs the next command regardless. `&&` — only runs the next command on success. `||` — only runs the next command on failure.
-- `trap ... EXIT` — guaranteed cleanup, fires no matter how the script ends.
-- `trap ... ERR` — fires at the exact moment a command fails, before `EXIT` fires; always fires before `EXIT`, never after.
+- `trap ... EXIT` — "no matter what happens, do this on the way out." Guaranteed cleanup/summary, fires no matter how the script ends (success, failure, `exit 1`, even Ctrl+C).
+- `trap ... ERR` — "the moment something goes wrong, do this." Fires only on an actual command failure, before `EXIT` fires; always fires before `EXIT`, never after.
 - `set`/`trap` = main production safety feature (runtime behavior). `shellcheck` = additional quality check (run from the terminal against the script itself).
