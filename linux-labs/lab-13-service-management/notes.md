@@ -94,6 +94,11 @@ Anything that changes how the process runs (`ExecStart=`, `User=`, `Restart=`, e
 
 **In my own words — restart vs reload:** restarting basically creates a new PID for the process. It basically turns off and turns it on automatically, the computer or the server. Reload basically refreshes the config files while the program is running. It doesn't turn off or turn on, and we're still keeping the same PID.
 
+**The full workflow, start to finish:**
+- Create or edit the `.service` file
+- `daemon-reload` — systemd now knows about the change
+- Changed the app's own config (like `nginx.conf`), daemon supports it → `reload`. Anything else (unit file, or unsure) → `restart` — the running process actually picks it up
+
 ---
 
 ## 9. failed / active / inactive — What Each State Actually Means
